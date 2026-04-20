@@ -74,7 +74,7 @@
       "永远不要低估，一个新手妈妈变美的决心！",
       "有娃的都不建议这么做，毕竟太「赚」了！"
     ],
-    "skillFile": "叽叽亚亚_创作指南.skill/SKILL.md",
+    "skillFile": "data/skills/jijiyaya.md",
     "reportPath": "/reports/jijiyaya.html",
     "status": "active"
   },
@@ -153,7 +153,7 @@
       "最喜欢英国的天气。",
       "时装周副业是去给巴黎铁塔点灯"
     ],
-    "skillFile": "碳酸饮料拜拜_创作指南.skill/SKILL.md",
+    "skillFile": "data/skills/tansuanbaibai.md",
     "reportPath": "/reports/tansuanbaibai.html",
     "status": "active"
   },
@@ -232,7 +232,7 @@
       "谈钱伤感情？男人为啥对彩礼这么敏感？",
       "高段位送礼！送礼送的绝不止人情世故！"
     ],
-    "skillFile": "夜忙症_创作指南.skill/SKILL.md",
+    "skillFile": "data/skills/yemangzheng.md",
     "reportPath": "/reports/yemangzheng.html",
     "status": "active"
   },
@@ -311,7 +311,7 @@
       "神兽回来啦！",
       "这样的小碗粉，一人吃五六七八碗不过分吧"
     ],
-    "skillFile": "腊月小九_创作指南.skill/SKILL.md",
+    "skillFile": "data/skills/layuexiaojiu.md",
     "reportPath": "/reports/layuexiaojiu.html",
     "status": "active"
   },
@@ -390,7 +390,7 @@
       "因为懒❗️把自己活活逼成了装修界爱因斯坦",
       "你可能不认识我，但也许刷过我家的懒人设计"
     ],
-    "skillFile": "木梓蓝🏠_创作指南.skill/SKILL.md",
+    "skillFile": "data/skills/muzilan.md",
     "reportPath": "/reports/muzilan.html",
     "status": "active"
   }

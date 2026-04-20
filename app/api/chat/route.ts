@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const skillContent = readFileSync(skillPath, 'utf-8')
 
     // Read wrapper prompt
-    const wrapperPath = path.join(process.cwd(), ' system prompt', 'wrapper prompt.md')
+    const wrapperPath = path.join(process.cwd(), 'data', 'wrapper-prompt.md')
     const wrapperContent = readFileSync(wrapperPath, 'utf-8')
 
     // System prompt = SKILL.md content + wrapper instructions
