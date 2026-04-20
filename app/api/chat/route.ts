@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { readFileSync } from 'fs'
-import path from 'path'
+import { SKILLS } from '@/data/skills/index'
+import { WRAPPER_PROMPT } from '@/data/wrapper-prompt'
 
 const client = new Anthropic()
 
@@ -13,32 +13,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing bloggerId' }, { status: 400 })
     }
 
-    // Load bloggers.json to get skillFile path
-    const bloggersPath = path.join(process.cwd(), 'data', 'bloggers.json')
-    const bloggers = JSON.parse(readFileSync(bloggersPath, 'utf-8'))
-    const blogger = bloggers.find((b: { id: string }) => b.id === bloggerId)
-
-    if (!blogger) {
+    const skillContent = SKILLS[bloggerId]
+    if (!skillContent) {
       return NextResponse.json({ error: 'Blogger not found' }, { status: 404 })
     }
 
-    // Read SKILL.md
-    const skillPath = path.join(process.cwd(), blogger.skillFile)
-    const skillContent = readFileSync(skillPath, 'utf-8')
+    const systemPrompt = `${skillContent}\n\n---\n\n${WRAPPER_PROMPT}`
 
-    // Read wrapper prompt
-    const wrapperPath = path.join(process.cwd(), 'data', 'wrapper-prompt.md')
-    const wrapperContent = readFileSync(wrapperPath, 'utf-8')
-
-    // System prompt = SKILL.md content + wrapper instructions
-    const systemPrompt = `${skillContent}\n\n---\n\n${wrapperContent}`
-
-    // Stream response
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Anthropic requires at least 1 message; empty array = greeting trigger
           const apiMessages = (messages && messages.length > 0)
             ? messages
             : [{ role: 'user' as const, content: '请按照指引，现在开始打招呼。' }]
