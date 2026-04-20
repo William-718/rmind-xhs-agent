@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](#license)
 
 ---
-
+产品demo: rmindai.vercel.app
 ![薯脑 Rmind Hero](public/hero.png)
 
 ---
