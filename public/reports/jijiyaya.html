@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>叽叽亚亚 — 博主蒸馏报告</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#CEC9C0;
+  --accent:#8A3926;
+  --text:#1A1211;
+  --muted:#7A6E65;
+  --inv:#FAF6F2;
+  --border-main:1px solid #1A1211;
+  --border-muted:1px solid #7A6E65;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Serif SC',serif;
+  font-size:16px;
+  line-height:1.7;
+}
+/* ── STATUS BAR ── */
+.statusbar{
+  position:sticky;top:0;z-index:100;
+  background:#0A0806;
+  color:#FAF6F2;
+  font-family:'Space Mono',monospace;
+  font-size:13px;
+  letter-spacing:.05em;
+  padding:10px 32px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.statusbar .blink{animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── LAYOUT ── */
+.page{max-width:1000px;margin:0 auto;padding:0 32px}
+
+.module{
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:48px;
+  padding:64px 0;
+  border-bottom:var(--border-main);
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.module.visible{opacity:1;transform:translateY(0)}
+
+.module-num{
+  font-family:'Space Mono',monospace;
+  font-size:88px;
+  line-height:1;
+  color:rgba(26,18,17,.09);
+  user-select:none;
+  padding-top:4px;
+}
+
+.module-body{}
+.mod-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.mod-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:20px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:16px;
+}
+.divider-wrap{margin-bottom:28px}
+.divider-line{
+  height:1px;
+  background:var(--text);
+  width:0;
+  transition:width .8s ease;
+}
+.module.visible .divider-line{width:100%}
+
+/* ── INVERTED MODULES ── */
+.module-inv{
+  margin:0 -32px;
+  padding:56px 32px;
+  background:var(--accent);
+  color:var(--inv);
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:48px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.module-inv.visible{opacity:1;transform:translateY(0)}
+.module-inv .module-num{color:rgba(250,246,242,.15)}
+.module-inv .mod-label{color:rgba(250,246,242,.6)}
+.module-inv .mod-title{color:var(--inv)}
+.module-inv .divider-line{background:rgba(250,246,242,.4)}
+
+/* ── TYPOGRAPHY ── */
+p{margin-bottom:14px;font-size:15px;line-height:1.75}
+h3{font-size:16px;font-weight:700;margin:24px 0 10px}
+h4{font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--muted);font-family:'Space Mono',monospace}
+strong{font-weight:700}
+
+/* ── TABLE ── */
+.dtable{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.dtable th{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  border-bottom:var(--border-main);
+  padding:8px 12px 8px 0;
+  text-align:left;
+}
+.dtable td{
+  padding:9px 12px 9px 0;
+  border-bottom:var(--border-muted);
+  vertical-align:top;
+  line-height:1.5;
+}
+.dtable td:first-child{font-family:'Space Mono',monospace;font-size:13px}
+
+/* ── HERO CARD (Module 1) ── */
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  letter-spacing:.1em;
+  color:rgba(250,246,242,.6);
+  margin-bottom:8px;
+}
+.hero-name{
+  font-size:36px;
+  font-weight:700;
+  color:var(--inv);
+  margin-bottom:6px;
+}
+.hero-tagline{
+  font-size:16px;
+  color:rgba(250,246,242,.85);
+  margin-bottom:28px;
+  font-style:italic;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:20px;
+  margin:28px 0;
+}
+.hero-stat{border-left:3px solid rgba(250,246,242,.4);padding-left:12px}
+.hero-stat-val{
+  font-family:'Space Mono',monospace;
+  font-size:22px;
+  font-weight:700;
+  color:var(--inv);
+  display:block;
+}
+.hero-stat-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:rgba(250,246,242,.6);
+  letter-spacing:.06em;
+}
+.hero-formula{
+  border:1px solid rgba(250,246,242,.35);
+  padding:16px 20px;
+  margin-top:24px;
+  font-size:14px;
+  color:var(--inv);
+}
+.hero-formula .kw{color:var(--inv);font-weight:700;letter-spacing:.05em}
+.meta-foot{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:rgba(250,246,242,.5);
+  margin-top:20px;
+}
+
+/* ── PERSONA CARDS ── */
+.card-list{list-style:none;margin:0;padding:0}
+.card-list li{
+  padding:16px 0;
+  border-bottom:var(--border-muted);
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:24px;
+}
+.card-list li:last-child{border-bottom:none}
+.card-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--muted);
+  text-transform:uppercase;
+  padding-top:2px;
+}
+.card-val{font-size:15px;line-height:1.7}
+.card-val.dim{font-size:14px;color:var(--muted)}
+
+/* ── IF→THEN ── */
+.ifthen{
+  border-left:4px solid var(--accent);
+  padding:10px 16px;
+  margin:12px 0;
+  background:rgba(138,57,38,.06);
+}
+.ifthen .it-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.ifthen .it-rule{font-size:15px;font-weight:500}
+.ifthen .it-ev{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ── TOP10 ── */
+.top-item{border:var(--border-muted);padding:20px;margin-bottom:16px}
+.top-item-deep{border:var(--border-main);padding:20px;margin-bottom:16px}
+.t-rank{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.06em;
+  margin-bottom:6px;
+}
+.t-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.t-meta{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.t-block{margin:12px 0}
+.t-block-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.06em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+.t-body{font-size:14px;line-height:1.65}
+.top-quick{
+  display:flex;flex-wrap:wrap;gap:12px;
+  margin-bottom:10px;
+}
+.top-quick-item{
+  border:var(--border-muted);
+  padding:12px 16px;
+  flex:1;min-width:200px;
+}
+.tq-rank{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
+.tq-title{font-size:13px;font-weight:600;margin:4px 0}
+.tq-meta{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+.tq-reason{font-size:13px;color:var(--text);margin-top:6px}
+
+/* ── FORMULA TABLE ── */
+.ftable{width:100%;border-collapse:collapse;margin:16px 0}
+.ftable th{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.07em;
+  color:var(--muted);
+  border-bottom:var(--border-main);
+  padding:8px 10px 8px 0;
+  text-align:left;
+}
+.ftable td{
+  padding:10px 10px 10px 0;
+  border-bottom:var(--border-muted);
+  font-size:13px;
+  vertical-align:top;
+}
+.ftable td:first-child{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  width:24px;
+}
+
+/* ── TOPIC TABLE ── */
+.ttable{width:100%;border-collapse:collapse;margin:16px 0}
+.ttable th{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.07em;
+  color:var(--muted);
+  border-bottom:var(--border-main);
+  padding:8px 10px 8px 0;
+  text-align:left;
+}
+.ttable td{
+  padding:10px 10px 10px 0;
+  border-bottom:var(--border-muted);
+  font-size:14px;
+  vertical-align:top;
+  line-height:1.5;
+}
+.ttable td:first-child{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  width:28px;
+}
+
+/* ── STAT GRID (Module 8) ── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:24px;
+  margin:20px 0;
+}
+.stat-card{border-left:3px solid var(--inv);padding-left:14px}
+.stat-val{
+  font-family:'Space Mono',monospace;
+  font-size:20px;
+  font-weight:700;
+  color:var(--inv);
+  display:block;
+}
+.stat-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:rgba(250,246,242,.6);
+  letter-spacing:.06em;
+  display:block;
+  margin-top:3px;
+}
+.data-note{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:rgba(250,246,242,.55);
+  margin-top:8px;
+}
+
+/* ── DETAILS / SUMMARY ── */
+details{margin:16px 0}
+summary{
+  font-family:'Space Mono',monospace;
+  font-size:13px;
+  color:var(--accent);
+  cursor:pointer;
+  letter-spacing:.04em;
+  padding:10px 0;
+  border-top:var(--border-muted);
+  user-select:none;
+  list-style:none;
+}
+summary::before{content:'▶  '}
+details[open] summary::before{content:'▼  '}
+details .details-body{
+  padding:16px 0;
+  border-bottom:var(--border-muted);
+}
+
+/* ── CONCLUSION MODULE ── */
+.conc-section{margin-bottom:24px}
+.conc-clabel{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  color:rgba(250,246,242,.6);
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.conc-list{list-style:none;padding:0}
+.conc-list li{
+  padding:10px 0;
+  border-bottom:1px solid rgba(250,246,242,.2);
+  font-size:15px;
+  color:var(--inv);
+  line-height:1.65;
+}
+.conc-list li:last-child{border-bottom:none}
+.conc-list li::before{
+  font-family:'Space Mono',monospace;
+  font-size:13px;
+  margin-right:10px;
+}
+.conc-formula{
+  border:1px solid rgba(250,246,242,.4);
+  padding:20px;
+  margin-top:20px;
+  font-size:15px;
+  color:var(--inv);
+  line-height:1.7;
+}
+.sys-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:rgba(250,246,242,.55);
+  display:block;
+  margin-bottom:8px;
+}
+
+/* ── BELIEF BLOCK ── */
+.belief-block{
+  border-left:3px solid var(--accent);
+  padding:14px 18px;
+  margin:14px 0;
+  background:rgba(138,57,38,.05);
+}
+.belief-text{font-size:15px;font-weight:600;margin-bottom:6px}
+.belief-source{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+
+/* ── TENSION BLOCK ── */
+.tension{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin:16px 0;
+}
+.tension-side{
+  border:var(--border-muted);
+  padding:14px;
+}
+.tension-side-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.07em;
+  margin-bottom:6px;
+}
+.tension-side p{font-size:14px;line-height:1.6}
+
+/* ── BAR ── */
+.bar-row{display:flex;align-items:center;gap:12px;margin:8px 0}
+.bar-label{font-size:13px;min-width:90px;color:var(--text)}
+.bar-track{flex:1;height:6px;background:rgba(26,18,17,.12);position:relative}
+.bar-fill{height:6px;background:var(--accent);position:absolute;left:0;top:0}
+.bar-val{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);min-width:44px;text-align:right}
+
+/* ── TREND ── */
+.trend-up{color:#2C6E3A}
+.trend-down{color:#8A3926}
+
+/* ── BLOCKQUOTE ── */
+blockquote{
+  border-left:4px solid var(--accent);
+  padding:10px 16px;
+  margin:16px 0;
+  font-size:15px;
+  font-style:italic;
+  color:var(--text);
+}
+
+/* ── HIGHLIGHT ── */
+.hl{background:rgba(138,57,38,.1);padding:1px 4px}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .module,.module-inv{grid-template-columns:1fr;gap:16px}
+  .module-num{display:none}
+  .module-inv{margin:0 -16px;padding:40px 16px}
+  .page{padding:0 16px}
+  .hero-grid{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .tension{grid-template-columns:1fr}
+  .card-list li{grid-template-columns:1fr;gap:4px}
+}
+
+/* ── REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  .module,.module-inv{opacity:1;transform:none;transition:none}
+  .divider-line{width:100%;transition:none}
+  .blink{animation:none}
+  .statusbar .blink{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  SUBJECT: 叽叽亚亚 &nbsp;|&nbsp; NOTES_ANALYZED: 30/31 &nbsp;|&nbsp; GENERATED: 2026-04-19 &nbsp;|&nbsp; STATUS: <span class="blink">DISTILLED</span>
+</div>
+
+<div class="page">
+
+<!-- ══════════════════ MODULE 1：一眼看清 ══════════════════ -->
+<div class="module-inv" data-module="1">
+  <div class="module-num">01</div>
+  <div class="module-body">
+    <div class="mod-label">OVERVIEW / 一眼看清</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="hero-eyebrow">BLOGGER PROFILE · XIAOHONGSHU</div>
+    <div class="hero-name">叽叽亚亚</div>
+    <div class="hero-tagline">揭露派美妆博主 × 真实生活记录者，用亲身经历说话，拒绝虚假种草</div>
+
+    <div class="hero-grid">
+      <div class="hero-stat">
+        <span class="hero-stat-val">79.2万</span>
+        <span class="hero-stat-label">粉丝数</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">1771万</span>
+        <span class="hero-stat-label">获赞与收藏</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">10,222</span>
+        <span class="hero-stat-label">均赞（30条）</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">36.1%</span>
+        <span class="hero-stat-label">藏赞比</span>
+      </div>
+    </div>
+
+    <div class="hero-formula">
+      <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;color:rgba(250,246,242,.6);display:block;margin-bottom:8px">CORE FORMULA</span>
+      <span class="kw">揭露者视角</span> × <span class="kw">亲历证明</span> × <span class="kw">真实里程碑</span>
+      <div style="font-size:14px;color:rgba(250,246,242,.75);margin-top:8px">
+        口红博主出道积累信任 → 揭露美妆圈套路反而加固公信力 → 以真实人生经历（结婚/育儿/产后）持续输出情感共鸣
+      </div>
+    </div>
+
+    <div class="meta-foot">
+      ⚠️ 基于 30 条笔记蒸馏 &nbsp;|&nbsp; 采样范围 30/31 条 &nbsp;|&nbsp; 生成时间：2026-04-19
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 2：人设拆解 ══════════════════ -->
+<div class="module" data-module="2">
+  <div class="module-num">02</div>
+  <div class="module-body">
+    <div class="mod-label">PERSONA / 人设拆解</div>
+    <div class="mod-title">TA 是谁？凭什么值得关注？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>人设三板斧</h3>
+    <ul class="card-list">
+      <li>
+        <div class="card-label">揭露派</div>
+        <div class="card-val">不跟风推荐，专门扒皮套路——率先揭露医美造假案例、戳破虚假种草话术。"<span class="hl">没想到吧！这些完美案例都是造假出来的！</span>"（6021赞）是TA的代表立场：我来告诉你不该信什么。</div>
+      </li>
+      <li>
+        <div class="card-label">亲历者</div>
+        <div class="card-val">用真实人生里程碑作内容原料：结婚备婚、怀孕生娃、产后恢复全都拍给你看。"<span class="hl">结婚确定。。不装一下？</span>"（3.9万赞）证明人生大事比选题更有流量。</div>
+      </li>
+      <li>
+        <div class="card-label">直率姐</div>
+        <div class="card-val">"说点大实话"是TA的标志性标签，多次出现。不绕弯子，不卖情怀，直接给判断——"<span class="hl">这还只是穷三代啊…还有一堆没买完呢…</span>"（1.6万赞）连自嘲都做成了话题。</div>
+      </li>
+    </ul>
+
+    <h3>粉丝追TA的本质原因</h3>
+    <blockquote>粉丝把TA当"先踩坑的姐妹"——TA替她们试过了、体验过了、揭穿了，她们只需要跟进或避开。这种关系不是仰望，而是平视：TA遭遇的，就是她们也会遭遇的。</blockquote>
+
+    <h3>护城河分析</h3>
+    <p>TA的护城河不是美妆专业度（市场上不缺），而是<strong>揭露者人设积累的不对称信任</strong>。一个敢说广告商不希望你说的话的博主，反而会让粉丝更信TA说好的东西。数据佐证：护肤类（含教程）均赞达21,422，远超整体均赞10,222——当粉丝信任TA的眼光，TA说哪个有效就真的有效。</p>
+    <p>更难被复制的是：TA已经用婚姻、生娃等不可逆的人生经历把粉丝"绑定"在一条时间线上。内容不再只是产品测评，而是<strong>一个真实生命的连续纪录</strong>，这是无法伪造的护城河。</p>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 3：认知层 ══════════════════ -->
+<div class="module" data-module="3">
+  <div class="module-num">03</div>
+  <div class="module-body">
+    <div class="mod-label">COGNITION / 认知层</div>
+    <div class="mod-title">TA 怎么想？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:20px">⚠️ 基于30条笔记提取，正文平均109字，认知层主要从标题+评论+关键正文推断，样本有限仅供参考</p>
+
+    <h3>核心信念（5条，从多笔记交叉验证）</h3>
+
+    <div class="belief-block">
+      <div class="belief-text">「比推荐好物更值钱的是揭露套路」</div>
+      <div class="belief-source">出现于：《没想到吧！这些完美案例都是造假出来的！》《别再被骗了，妈生唇都是我这样操作出来的！》《作为口红博主，我居然被种草一堆冷门口红？》 | ✅ 跨主题复现3次</div>
+    </div>
+
+    <div class="belief-block">
+      <div class="belief-text">「真实经历就是最好的内容——不需要包装」</div>
+      <div class="belief-source">出现于：全部育儿/婚姻笔记。0% Emoji使用率、平均109字正文、全视频形式，内容依赖视频真实性，不靠文字营造感觉 | ✅ 行为层面全量验证</div>
+    </div>
+
+    <div class="belief-block">
+      <div class="belief-text">「美是可以被主动争取的，逆风翻盘是选择不是运气」</div>
+      <div class="belief-source">直接原文：《生完能有这状态！我可太满意了！》— "所以姐下定决定，一定要逆风翻盘" | 出现于：《永远不要低估，一个新手妈妈变美的决心！》《涂涂抹抹几下子，就这么轻松变白了！》 | ✅ 复现3次</div>
+    </div>
+
+    <div class="belief-block">
+      <div class="belief-text">「作为博主，承认自己被坑、被惊喜、不完美，反而更可信」</div>
+      <div class="belief-source">出现于：《作为口红博主，我居然被种草一堆冷门口红？》（自己被种草）《这还只是穷三代啊…买了一堆没用的设备》 | ✅ 自我暴露式写作，跨2次大爆款</div>
+    </div>
+
+    <div class="belief-block">
+      <div class="belief-text">「女性健康和身体问题值得被大声说出来，而不是藏着掖着」</div>
+      <div class="belief-source">出现于：《女生速看！这远比你想象的重要一万倍！！》（孕前检查）《只顾着叫人生生生，这些实话怎么没人说？》 | ✅ 复现2次，且收藏率极高（59%）</div>
+    </div>
+
+    <details>
+      <summary>查看全部原文观点摘录 →</summary>
+      <div class="details-body">
+        <ul class="card-list" style="font-size:14px">
+          <li><div class="card-label" style="font-size:11px">《生完能有这状态》</div><div>"所以姐下定决定，一定要逆风翻盘" — 产后恢复主题</div></li>
+          <li><div class="card-label" style="font-size:11px">《结婚确定》</div><div>"一生一次的人生大事，当然得装把大的了！" — 结婚备物主题</div></li>
+          <li><div class="card-label" style="font-size:11px">《没想到吧！造假案例》</div><div>"姐这视频一发，看谁还上当！再说了，这玩意恢复期长，还贼痛！" — 揭露医美套路</div></li>
+          <li><div class="card-label" style="font-size:11px">《女生速看》</div><div>"别忽视任何小病小痛！孕前一定要做好检查！亲身经历分享，能帮到一个姐妹也是好的！" — 健康提醒</div></li>
+          <li><div class="card-label" style="font-size:11px">《涂涂抹抹》</div><div>"仅个人经验分享 效果因人而异 无不良引导 请树立正确价值观" — 护肤内容免责</div></li>
+        </ul>
+      </div>
+    </details>
+
+    <h3>认知框架</h3>
+    <div class="ifthen">
+      <div class="it-label">框架 1 · 反转视角</div>
+      <div class="it-rule">用"出人意料的身份/结果反差"切入，让读者重新审视已知信息</div>
+      <div class="it-ev">证据：《作为口红博主，我居然被种草》（专业者被外行教了）；《装扮不同就会被下菜碟？》（服装决定待遇）；《没想到吧！这些完美案例都是造假》（看起来好的其实是假的）</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">框架 2 · 亲历证明</div>
+      <div class="it-rule">不说理论，用自己的身体做实验——"我试过了"比"研究表明"更有说服力</div>
+      <div class="it-ev">证据：全身美白教程（藏赞比66%，实用性极高）；产后恢复系列；孕前检查经历分享（收藏率59%）</div>
+    </div>
+
+    <h3>观点张力（真实的矛盾）</h3>
+    <div class="tension">
+      <div class="tension-side">
+        <div class="tension-side-label">观点 A · 揭露商业套路</div>
+        <p>《没想到吧！这些完美案例都是造假出来的！》明确揭露医美博主通过虚假素材引导消费</p>
+      </div>
+      <div class="tension-side">
+        <div class="tension-side-label">观点 B · 自身也接商单</div>
+        <p>《有娃的都不建议这么做》是金领冠奶粉广告（1.1万赞），修丽可AGE合作笔记也在TOP10</p>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--muted)">如何理解：揭露者也是参与者，这不是伪善，而是现实。TA接广告但同时保持批判意识——这种矛盾反而比"从不接广告"更真实，更让粉丝信任。创作时不要刻意回避这种张力。</p>
+
+    <h3>价值立场</h3>
+    <div class="bar-row"><span class="bar-label">护肤</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div><span class="bar-val">5次</span></div>
+    <div class="bar-row"><span class="bar-label">测评</span><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">6次</span></div>
+    <div class="bar-row"><span class="bar-label">抗老</span><div class="bar-track"><div class="bar-fill" style="width:37%"></div></div><span class="bar-val">3次</span></div>
+    <div class="bar-row"><span class="bar-label">说大实话</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">2次</span></div>
+    <div class="bar-row"><span class="bar-label">产后/育儿</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">2次</span></div>
+    <p style="margin-top:16px;font-size:15px"><strong>内容底色：</strong>叽叽亚亚的内容底色是<strong>「有立场的真实女性生活体验」</strong>——不是精修版"完美女人"，而是在美妆、育儿、关系中真实摸爬滚打的普通姐妹。</p>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 4：策略层 ══════════════════ -->
+<div class="module" data-module="4">
+  <div class="module-num">04</div>
+  <div class="module-body">
+    <div class="mod-label">STRATEGY / 策略层</div>
+    <div class="mod-title">TA 怎么运营？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>系列内容规划</h3>
+    <table class="dtable">
+      <thead><tr><th>系列</th><th>条数/占比</th><th>均赞</th><th>节奏</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>护肤/抗老</td><td>6条 (20%)</td><td>≈14,000</td><td>每月1-2条</td><td>持续中</td></tr>
+        <tr><td>美妆测评</td><td>7条 (23%)</td><td>≈8,000</td><td>每月1条</td><td>持续中</td></tr>
+        <tr><td>产后/育儿</td><td>6条 (20%)</td><td>≈4,000</td><td>不规则</td><td>近期增加</td></tr>
+        <tr><td>生活Vlog</td><td>4条 (13%)</td><td>3,175</td><td>不规则</td><td>近期增加</td></tr>
+        <tr><td>生活里程碑</td><td>3条 (10%)</td><td>≈17,000</td><td>事件驱动</td><td>偶发</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:14px;color:var(--muted)">⚠️ 战略矛盾：近期趋向均赞更低的测评类和日常Vlog，而护肤/里程碑类才是真正的流量引擎。可能正在经历"内容重心漂移"。</p>
+
+    <h3>蹭热点节奏</h3>
+    <p>数据中<strong>无明显蹭热点迹象</strong>。内容触发点均来自自身生活事件（结婚/生娃/产后），或美妆圈自发的测评话题（白女好物/AGE精华/刮痧板），不追社会热点。时效要求低，但"人生大事"类内容自带天然流量峰值。</p>
+
+    <h3>运营习惯（If-Then 推断）</h3>
+
+    <div class="ifthen">
+      <div class="it-label">习惯 1</div>
+      <div class="it-rule">If 涉及效果声称（护肤/医美/减肥）→ Then 必加标准免责声明</div>
+      <div class="it-ev">证据：《涂涂抹抹》"仅个人经验分享 效果因人而异"；《妈生唇》"剧情演绎仅供娱乐 无任何效果建议"；《女生速看》"无任何不良引导 请树立正确价值观" — 三条高赞笔记均有免责</div>
+    </div>
+
+    <div class="ifthen">
+      <div class="it-label">习惯 2</div>
+      <div class="it-rule">If 接广告合作 → Then 包装成真实生活场景，不做硬广</div>
+      <div class="it-ev">证据：金领冠（1.1万赞）包装成"生福宝后第一年的竞拍游戏"；修丽可AGE包装成"揭露过度宣传"的测评，实则展示产品线</div>
+    </div>
+
+    <div class="ifthen">
+      <div class="it-label">习惯 3</div>
+      <div class="it-rule">If 内容争议性强（社会实验/揭露类）→ Then 不在正文解释，让评论区自然发酵</div>
+      <div class="it-ev">证据：《装扮不同就会被下菜碟？》456条评论（全榜最高），正文几乎只有标签，争议完全靠视频和标题引发</div>
+    </div>
+
+    <div class="ifthen">
+      <div class="it-label">习惯 4</div>
+      <div class="it-rule">If 护肤/教程类内容 → Then 优先选择能展示"前后对比"或"变化过程"的题材</div>
+      <div class="it-ev">证据：护肤类均赞21,422为全高，《涂涂抹抹几下子就变白》《光电后不要再捂成木乃伊》均属过程型内容，藏赞比显著高于平均</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 5：TOP10 爆款拆解 ══════════════════ -->
+<div class="module" data-module="5">
+  <div class="module-num">05</div>
+  <div class="module-body">
+    <div class="mod-label">TOP10 / 爆款拆解</div>
+    <div class="mod-title">爆款的真正原因</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <!-- TOP 1 -->
+    <div class="top-item-deep">
+      <div class="t-rank"># 01 · HIGHEST PERFORMER</div>
+      <div class="t-title">作为口红博主，我居然被种草一堆冷门口红？</div>
+      <div class="t-meta">赞 61,000 &nbsp;|&nbsp; 藏 21,000 &nbsp;|&nbsp; 评 146 &nbsp;|&nbsp; 藏赞比 34.4%</div>
+      <div class="t-block">
+        <div class="t-block-label">为什么爆</div>
+        <div class="t-body">这条爆的核心原因是<strong>身份悖论制造惊喜</strong>。"作为口红博主"设立了权威预期，"居然被种草"则打破这个预期——专家自己也在学，说明这些冷门口红有多特别。读者好奇心被点燃，同时消除了信息门槛（连博主都不知道，我不知道正常）。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">可借鉴点</div>
+        <div class="t-body">用"作为{专业身份}，我居然{出人意料的发现}"结构，既建立权威又拆解权威。套用：<em>作为每天做饭的人，我居然被这个食材惊到了。</em></div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">评论区洞察</div>
+        <div class="t-body">"好看第二支不算最冷门的" — 读者真的逐一评价，说明这是<strong>驱动用户主动判断</strong>的内容，参与感极强。评论=粉丝在帮博主做后续测评。</div>
+      </div>
+    </div>
+
+    <!-- TOP 2 -->
+    <div class="top-item-deep">
+      <div class="t-rank"># 02 · HIGHEST SAVE RATE (66%)</div>
+      <div class="t-title">涂涂抹抹几下子，就这么轻松变白了！</div>
+      <div class="t-meta">赞 56,000 &nbsp;|&nbsp; 藏 37,000 &nbsp;|&nbsp; 评 70 &nbsp;|&nbsp; 藏赞比 66.1% ← 远超均值</div>
+      <div class="t-block">
+        <div class="t-block-label">为什么爆</div>
+        <div class="t-body">藏赞比66%说明这是<strong>典型"收藏型"内容</strong>——读者想实操，先存起来。"几下子""轻松"传达门槛极低，"变白"是结果展示。核心：低门槛+视觉惊喜+可重复的步骤=收藏率爆炸。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">可借鉴点</div>
+        <div class="t-body">护肤教程追求"简单操作+显著结果"的公式。标题里要传达"你做得到"的门槛感。对比：这个标题把"简单"说了两遍（几下子+轻松），非常有意识。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">评论区洞察</div>
+        <div class="t-body">"未婚先孕吗" / "感觉像老夫妻了" — 评论在猜TA的婚恋状态，说明视频有生活故事性，读者看完想聊TA这个人，不只是聊产品。</div>
+      </div>
+    </div>
+
+    <!-- TOP 3 -->
+    <div class="top-item-deep">
+      <div class="t-rank"># 03 · MILESTONE CONTENT</div>
+      <div class="t-title">结婚确定。。不装一下？</div>
+      <div class="t-meta">赞 39,000 &nbsp;|&nbsp; 藏 17,000 &nbsp;|&nbsp; 评 184 &nbsp;|&nbsp; 藏赞比 43.6%</div>
+      <div class="t-block">
+        <div class="t-block-label">为什么爆</div>
+        <div class="t-body">人生里程碑话题自带搜索流量（婚前准备是高频搜索词），而"不装一下"把仪式感和实用好物结合：读者不只关心TA结婚，更关心那些她用来"装"的东西。结婚=搜索流量，好物清单=收藏动机。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">可借鉴点</div>
+        <div class="t-body">把人生大事当"内容容器"，把好物推荐"装"进去。句式："{人生大事发生了}。。不{做一件顺理成章的事}？"</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">评论区洞察</div>
+        <div class="t-body">"假发胶片给我穿抹胸提供了思路" — 评论在迁移应用，说明这条内容激发了读者的<strong>联想创造</strong>，而不只是直接复制。</div>
+      </div>
+    </div>
+
+    <!-- TOP 4 -->
+    <div class="top-item-deep">
+      <div class="t-rank"># 04 · HIGHEST COMMENT COUNT (456评)</div>
+      <div class="t-title">装扮不同就会被下菜碟？这反差真没想到啊...</div>
+      <div class="t-meta">赞 21,000 &nbsp;|&nbsp; 藏 980 &nbsp;|&nbsp; 评 456 ← 最多 &nbsp;|&nbsp; 藏赞比 4.7% ← 最低</div>
+      <div class="t-block">
+        <div class="t-block-label">为什么爆</div>
+        <div class="t-body">藏赞比仅4.7%但评论456条——这是<strong>典型"炸评区"内容</strong>。社会实验触碰了穿搭+阶级待遇的敏感神经，人人都有立场，人人都想说话。赞数不高是因为争议内容无法取悦所有人，但讨论量极高。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">可借鉴点</div>
+        <div class="t-body">要评论量，做社会实验型内容；要收藏量，做护肤教程。两个目标对应两种内容策略，不要混淆。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">评论区洞察</div>
+        <div class="t-body">"你进的也不是同一家店铺啊，没有可比性" — 有人质疑实验设计，说明<strong>社会实验类内容的风险</strong>：如果方法论不严谨，会被正面批评，需要设计严密。</div>
+      </div>
+    </div>
+
+    <!-- TOP 5 -->
+    <div class="top-item-deep">
+      <div class="t-rank"># 05 · SELF-DEPRECATION</div>
+      <div class="t-title">这还只是穷三代啊…还有一堆没买完呢…</div>
+      <div class="t-meta">赞 16,000 &nbsp;|&nbsp; 藏 1857 &nbsp;|&nbsp; 评 1237 ← 仅次TOP4 &nbsp;|&nbsp; 藏赞比 11.6%</div>
+      <div class="t-block">
+        <div class="t-block-label">为什么爆</div>
+        <div class="t-body">自嘲式吐槽买了一堆没用的摄影设备，引发的是读者的"共鸣式嘲弄"——评论里大量"先练手再买设备"的嘲讽，但这恰恰是TA想要的：承认自己不完美，反而让粉丝更亲近。</div>
+      </div>
+      <div class="t-block">
+        <div class="t-block-label">可借鉴点</div>
+        <div class="t-body">高评论低收藏=炸评区内容。如果你想涨互动率，做一条真实的"翻车经历"内容，把自己的判断失误说出来。</div>
+      </div>
+    </div>
+
+    <!-- TOP 6-10 快速 -->
+    <h3>TOP6-10 快速拆解</h3>
+    <div class="top-quick">
+      <div class="top-quick-item">
+        <div class="tq-rank"># 06</div>
+        <div class="tq-title">有娃的都不建议这么做，毕竟太"赚"了！</div>
+        <div class="tq-meta">赞1.1万 藏6660 藏赞比60%</div>
+        <div class="tq-reason">广告包装成育儿游戏故事，高藏赞比说明读者当实用内容存了</div>
+      </div>
+      <div class="top-quick-item">
+        <div class="tq-rank"># 07</div>
+        <div class="tq-title">别再被骗了，妈生唇都是我这样操作出来的！</div>
+        <div class="tq-meta">赞8684 藏315</div>
+        <div class="tq-reason">揭露纹唇套路，评论里真实用户现身说身体危害，评论区=医美警示板</div>
+      </div>
+      <div class="top-quick-item">
+        <div class="tq-rank"># 08</div>
+        <div class="tq-title">女生速看！这远比你想象的重要一万倍！！</div>
+        <div class="tq-meta">赞7570 藏4465 藏赞比59%</div>
+        <div class="tq-reason">孕前检查亲身经历，高收藏=女性健康实用指南，被当备孕手册收藏</div>
+      </div>
+      <div class="top-quick-item">
+        <div class="tq-rank"># 09</div>
+        <div class="tq-title">没想到吧！这些完美案例都是造假出来的！</div>
+        <div class="tq-meta">赞6021 藏1978</div>
+        <div class="tq-reason">揭露医美造假，评论里医生真实现身"我接诊过这种患者"，权威佐证爆发</div>
+      </div>
+      <div class="top-quick-item">
+        <div class="tq-rank"># 10</div>
+        <div class="tq-title">火爆白女圈的便宜好货？我来看看怎么个事！</div>
+        <div class="tq-meta">赞5752 藏1404</div>
+        <div class="tq-reason">蹭"白女好物"话题，自费测评标签增加信任感，结果评论在讨论是否买了盗版</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 6：内容公式速查 ══════════════════ -->
+<div class="module" data-module="6">
+  <div class="module-num">06</div>
+  <div class="module-body">
+    <div class="mod-label">FORMULA / 内容公式速查</div>
+    <div class="mod-title">可以直接套用的公式</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>标题公式 TOP5</h3>
+    <table class="ftable">
+      <thead><tr><th>#</th><th>公式名</th><th>使用率</th><th>模板（填空）</th><th>博主原标题示例</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>感叹型</td>
+          <td>73.3%</td>
+          <td>"{结果}！{结果延伸}！"</td>
+          <td>涂涂抹抹几下子，就这么轻松变白了！</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>疑问+感叹型</td>
+          <td>36.7%</td>
+          <td>"{反常识质疑}？{出乎意料的答案}！"</td>
+          <td>装扮不同就会被下菜碟？这反差真没想到啊...</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>故事型身份反转</td>
+          <td>20.0%</td>
+          <td>"作为{专业身份}，我居然{出人意料的经历}？"</td>
+          <td>作为口红博主，我居然被种草一堆冷门口红？</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>悬念型</td>
+          <td>13.3%</td>
+          <td>"{是/否}？{反预期结论}"</td>
+          <td>没想到吧！这些完美案例都是造假出来的！</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>数字型</td>
+          <td>10.0%</td>
+          <td>"N招解决{问题}！"</td>
+          <td>新手妈妈带娃不愁！2招解决一秒入夏难题！</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>开头公式 TOP3</h3>
+    <div class="ifthen">
+      <div class="it-label">开头公式 #1 · 数据/结果前置（使用率最高）</div>
+      <div class="it-rule">直接展示结果或惊人数据，让读者第一帧就看到"值得继续看"的理由</div>
+      <div class="it-ev">示例：《女生速看》开头"别忽视任何小病小痛！" — 直接给结论；《涂涂抹抹》用Before-After画面替代文字</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">开头公式 #2 · 身份宣言（揭露类专用）</div>
+      <div class="it-rule">先建立权威身份，再做出令人意外的行动/判断</div>
+      <div class="it-ev">示例："作为口红博主…" / "姐这视频一发，看谁还上当！"</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">开头公式 #3 · 事件触发（里程碑类专用）</div>
+      <div class="it-rule">用人生大事或时间节点作锚点引入产品/经验</div>
+      <div class="it-ev">示例："一生一次的人生大事，当然得装把大的了！"（结婚）/ "这生福宝后的第一年，今年过年…"（育儿）</div>
+    </div>
+
+    <h3>CTA 与标签策略</h3>
+    <p>CTA 使用率极低（统计到显式CTA几乎为零）。TA的互动主要靠<strong>内容本身驱动评论</strong>（社会实验/揭露类），而非主动召唤。标签策略：固定类（#测评 #护肤 #抗老）+ 领域类（随内容选）+ 偶发商业类（#金领冠 等合作话题）。</p>
+
+    <p style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-top:16px">→ 完整公式详见 叽叽亚亚_创作指南.skill/SKILL.md</p>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 7：选题灵感 ══════════════════ -->
+<div class="module" data-module="7">
+  <div class="module-num">07</div>
+  <div class="module-body">
+    <div class="mod-label">TOPICS / 选题灵感 TOP15</div>
+    <div class="mod-title">基于数据推断的高潜力方向</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <table class="ttable">
+      <thead>
+        <tr><th>#</th><th>选题方向</th><th>难度</th><th>潜力</th><th>参考爆款</th><th>理由</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>护肤变白教程（步骤型）</td>
+          <td>⭐⭐</td>
+          <td>🔥🔥🔥</td>
+          <td>《涂涂抹抹》5.6万赞</td>
+          <td>护肤类均赞21,422最高，且藏赞比66%，用户主动收藏</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>揭露美妆/医美行业潜规则</td>
+          <td>⭐⭐</td>
+          <td>🔥🔥🔥</td>
+          <td>《完美案例都是造假》6021赞</td>
+          <td>符合核心人设，评论区会引来行内人验证，双向放大</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>结婚/孕产备品清单</td>
+          <td>⭐</td>
+          <td>🔥🔥🔥</td>
+          <td>《结婚确定不装一下》3.9万赞</td>
+          <td>里程碑内容自带高搜索量，一生就一次，用户必存</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>社会实验：身份/外貌决定待遇</td>
+          <td>⭐⭐⭐</td>
+          <td>🔥🔥</td>
+          <td>《装扮被下菜碟》2.1万赞456评</td>
+          <td>评论量最高，但需要真实拍摄素材，且方法论要严谨</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>冷门/被低估好物发现</td>
+          <td>⭐</td>
+          <td>🔥🔥🔥</td>
+          <td>《冷门口红》6.1万赞</td>
+          <td>反共识选品天然有话题性，适合任何品类复用</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>产后恢复第X周的真实状态</td>
+          <td>⭐</td>
+          <td>🔥🔥</td>
+          <td>《生完能有这状态》3634赞</td>
+          <td>孕产内容竞争略高但情感浓度高，受众黏度极强</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>女性健康必做检查清单</td>
+          <td>⭐</td>
+          <td>🔥🔥🔥</td>
+          <td>《女生速看孕前检查》7570赞藏赞比59%</td>
+          <td>实用型健康内容收藏率极高，被当参考书存</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>抗老面霜/精华横评</td>
+          <td>⭐⭐</td>
+          <td>🔥🔥</td>
+          <td>《修丽可AGE》6021赞</td>
+          <td>抗老是持续需求，专柜测评+直接结论受众喜欢</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>"买了没用"的东西大盘点</td>
+          <td>⭐</td>
+          <td>🔥🔥</td>
+          <td>《穷三代设备》1.6万赞1237评</td>
+          <td>自嘲+共鸣，评论区会有大量"我也是！"，互动率高</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>旅游盲盒+出行配置测评</td>
+          <td>⭐⭐</td>
+          <td>🔥</td>
+          <td>《198机票盲盒》4265赞</td>
+          <td>季节性流量，与人设稍偏，但轻松娱乐内容提升账号温度</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>婆家/家庭关系真实记录</td>
+          <td>⭐</td>
+          <td>🔥🔥</td>
+          <td>《婆婆爱爆金币》1257赞</td>
+          <td>家庭关系内容受众广，情感代入强，但需真实温暖</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>专柜穿搭实验（不同风格去同品牌）</td>
+          <td>⭐⭐⭐</td>
+          <td>🔥🔥</td>
+          <td>《装扮下菜碟》2.1万赞</td>
+          <td>可重复执行的系列概念，有持续话题价值</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>国产平价护肤对比测评</td>
+          <td>⭐⭐</td>
+          <td>🔥🔥</td>
+          <td>《白女好物便宜货》5752赞</td>
+          <td>经济下行期平价好物需求旺，自费测评标签增公信力</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>苹果肌/下垂脸改善实操</td>
+          <td>⭐⭐</td>
+          <td>🔥🔥</td>
+          <td>《苹果肌往上飞》3983赞</td>
+          <td>抗老刚需，操作型内容收藏率高</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>混喂期/断奶期真实经历</td>
+          <td>⭐</td>
+          <td>🔥🔥</td>
+          <td>《多亏靠谱老公混喂期》4127赞</td>
+          <td>母婴内容受众精准，情感共鸣强，商业转化好</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px">排序逻辑：预估潜力 × (1/难度)。潜力基于该方向现有笔记均赞 vs 博主整体均赞(10,222)对比推断。</p>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 8：数据面板（反转） ══════════════════ -->
+<div class="module-inv" data-module="8">
+  <div class="module-num">08</div>
+  <div class="module-body">
+    <div class="mod-label">DATA PANEL / 数据面板</div>
+    <div class="mod-title" style="color:var(--inv)">核心数据总览</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-val" data-target="10222" data-decimals="0">0</span>
+        <span class="stat-label">均赞</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" data-target="3688" data-decimals="0">0</span>
+        <span class="stat-label">均收藏</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" data-target="135" data-decimals="0">0</span>
+        <span class="stat-label">均评论</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" data-target="36.1" data-decimals="1" data-suffix="%">0%</span>
+        <span class="stat-label">藏赞比</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" data-target="10.0" data-decimals="1" data-suffix="%">0%</span>
+        <span class="stat-label">爆款率（>均赞×3）</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">30/0</span>
+        <span class="stat-label">视频 / 图文</span>
+      </div>
+    </div>
+
+    <div class="data-note">粉丝 792,081 &nbsp;|&nbsp; 获赞与收藏 17,719,322 &nbsp;|&nbsp; 发布频率 双周更 (均12.2天/条)</div>
+
+    <details style="margin-top:20px">
+      <summary style="color:rgba(250,246,242,.7)">查看详细数据 →</summary>
+      <div class="details-body" style="color:var(--inv)">
+        <table class="dtable" style="color:var(--inv)">
+          <thead><tr><th style="color:rgba(250,246,242,.6)">指标</th><th style="color:rgba(250,246,242,.6)">数值</th><th style="color:rgba(250,246,242,.6)">备注</th></tr></thead>
+          <tbody>
+            <tr><td>发布频率</td><td>双周更</td><td>均12.2天/条</td></tr>
+            <tr><td>Emoji使用率</td><td>0%</td><td>30条笔记全部不用emoji</td></tr>
+            <tr><td>正文平均长度</td><td>109字</td><td>极短，靠视频内容说话</td></tr>
+            <tr><td>列表使用率</td><td>0%</td><td>全叙述式，无列表</td></tr>
+            <tr><td>小标题使用率</td><td>0%</td><td>无结构化排版</td></tr>
+            <tr><td>爆款数</td><td>3条</td><td>>均赞×3（30,666）</td></tr>
+            <tr><td>超级爆款数</td><td>0条</td><td>>均赞×10（102,220）</td></tr>
+            <tr><td>总赞</td><td>306,677</td><td>30条笔记累计</td></tr>
+            <tr><td>总收藏</td><td>110,648</td><td></td></tr>
+            <tr><td>总评论</td><td>4,063</td><td></td></tr>
+          </tbody>
+        </table>
+        <p style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(250,246,242,.5);margin-top:12px">标签 TOP5：#测评(6) / #护肤(5) / #抗老(3) / #说点大实话(2) / #服帖底妆(2)</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 9：发展趋势 ══════════════════ -->
+<div class="module" data-module="9">
+  <div class="module-num">09</div>
+  <div class="module-body">
+    <div class="mod-label">TREND / 发展趋势</div>
+    <div class="mod-title">内容重心在往哪走？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <details open>
+      <summary>📈 发展趋势（基于30条笔记，仅供参考）→</summary>
+      <div class="details-body">
+        <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:16px">前15条（早期）vs 后15条（近期）对比</p>
+        <table class="dtable">
+          <thead><tr><th>内容方向</th><th>早期占比</th><th>近期占比</th><th>变化趋势</th></tr></thead>
+          <tbody>
+            <tr><td>测评类</td><td>6.7%</td><td>33.3%</td><td class="trend-up">📈 +26.6% 大幅增加</td></tr>
+            <tr><td>日常/Vlog</td><td>6.7%</td><td>20.0%</td><td class="trend-up">📈 +13.3%</td></tr>
+            <tr><td>说点大实话</td><td>0%</td><td>6.7%</td><td class="trend-up">📈 新增方向</td></tr>
+            <tr><td>经验分享</td><td>0%</td><td>6.7%</td><td class="trend-up">📈 新增方向</td></tr>
+            <tr><td>抗老</td><td>6.7%</td><td>13.3%</td><td class="trend-up">📈 +6.6%</td></tr>
+            <tr><td>教程/实操</td><td>20.0%</td><td>6.7%</td><td class="trend-down">📉 -13.3%</td></tr>
+            <tr><td>其他</td><td>20.0%</td><td>6.7%</td><td class="trend-down">📉 -13.3%</td></tr>
+            <tr><td>护肤</td><td>13.3%</td><td>6.7%</td><td class="trend-down">📉 -6.6%</td></tr>
+          </tbody>
+        </table>
+        <h4>战略层解读</h4>
+        <p>⚠️ <strong>潜在风险信号</strong>：近期内容正从高效的"护肤教程"和"里程碑类"向较低效的"测评"和"日常Vlog"迁移。测评类均赞（6,324）低于整体均赞（10,222），日常Vlog（3,175）更是最低。若趋势持续，整体互动数据可能下降。</p>
+        <p>🟢 <strong>正向信号</strong>：抗老内容小幅上升（+6.6%），护肤和抗老合并仍是核心；"说点大实话"话题新增，与核心人设高度一致，值得重点投入。</p>
+        <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)">置信度：低（30条笔记，时间跨度不明）</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ══════════════════ MODULE 10：核心结论（反转） ══════════════════ -->
+<div class="module-inv" data-module="10">
+  <div class="module-num">10</div>
+  <div class="module-body">
+    <div class="mod-label">CONCLUSION / 核心结论</div>
+    <div class="mod-title" style="color:var(--inv)">从叽叽亚亚身上可以学到什么？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="conc-section">
+      <div class="conc-clabel">✅ 3件可以立刻复制的事</div>
+      <ol class="conc-list" style="list-style:none;counter-reset:item">
+        <li style="counter-increment:item">
+          <strong>用"揭露框架"做测评，而不是单纯推荐</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">操作：每次测评先问"这个东西被过度宣传了什么？"，把揭露作为切入点，再说好在哪里。参考《没想到吧！完美案例都是造假的》《别再被骗了妈生唇》——这类内容有双重吸引力：反感套路的人和想了解真实效果的人都会看。</span>
+        </li>
+        <li style="counter-increment:item">
+          <strong>用人生里程碑做内容容器，把好物测评装进去</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">操作：不要单独做"好物推荐"，而是把好物嵌入一个真实的人生场景（结婚/搬家/怀孕/新工作）。"{事件}，当然得{合理的准备}"句式天然有转化率，因为读者正好也在经历同样阶段。</span>
+        </li>
+        <li style="counter-increment:item">
+          <strong>护肤教程做"结果前置+过程极简"</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">操作：视频第一帧就展示最终效果（Before-After），正文控制在100字内，关键步骤靠视频说。叽叽亚亚护肤类均赞21,422，藏赞比66%——这是全站最好的内容类型数据，公式可以直接复用。</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="conc-section">
+      <div class="conc-clabel">⚠️ 3件要避免的坑</div>
+      <ol class="conc-list" style="list-style:none">
+        <li>
+          <strong>不要让日常Vlog淹没专业内容</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">数据警告：日常Vlog均赞3,175是全低（护肤均赞21,422的1/7）。叽叽亚亚近期正在做这个漂移——近期测评+Vlog占比激增，而护肤教程减少。跟随这个趋势是个陷阱。</span>
+        </li>
+        <li>
+          <strong>不要做无实验设计的社会实验</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">反面教材：《装扮不同就会被下菜碟》评论区最高赞批评是"你进的不是同一家店，没有可比性"——社会实验内容若方法论有漏洞，会被专业读者正面攻击，信誉损耗大于流量收益。</span>
+        </li>
+        <li>
+          <strong>不要在正文堆积大量文字解释视频内容</strong><br>
+          <span style="font-size:14px;color:rgba(250,246,242,.75)">叽叽亚亚平均正文109字，0%列表率，0%Emoji——这不是随意，而是刻意。视频博主的正文是"入场券"不是"说明书"。过度图文化会削弱视频原生感。</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="conc-formula">
+      <span class="sys-label">CORE FORMULA · 底层公式</span>
+      叽叽亚亚的底层公式 = <strong>揭露者信任感</strong> × <strong>亲历证明说服力</strong> × <strong>真实里程碑情感共鸣</strong>
+      <div style="font-size:14px;color:rgba(250,246,242,.7);margin-top:10px">先告诉你什么是假的（建立辨别力），再用自己的身体证明什么是真的（建立说服力），最后用人生大事把你锁定在她的成长时间线上（建立情感绑定）。</div>
+    </div>
+  </div>
+</div>
+
+<div style="height:64px"></div>
+</div><!-- end .page -->
+
+<script>
+// ── 1. ScrollObserver: fadeInUp ──
+const modules = document.querySelectorAll('.module, .module-inv');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, {threshold: 0.1});
+modules.forEach(m => io.observe(m));
+
+// ── 2. Counter animation (Module 8) ──
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.target);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const suffix = el.dataset.suffix || '';
+  const duration = 1800;
+  const start = performance.now();
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const val = target * eased;
+    el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.round(val).toLocaleString()) + suffix;
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const counters = e.target.querySelectorAll('[data-target]');
+      counters.forEach(animateCounter);
+      counterObserver.unobserve(e.target);
+    }
+  });
+}, {threshold: 0.3});
+
+const module8 = document.querySelector('[data-module="8"]');
+if(module8) counterObserver.observe(module8);
+</script>
+</body>
+</html>

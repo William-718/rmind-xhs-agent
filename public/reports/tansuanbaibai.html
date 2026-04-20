@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>碳酸饮料拜拜 — 博主蒸馏报告</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #CEC9C0;
+    --accent: #8A3926;
+    --text: #1A1211;
+    --muted: #7A6E65;
+    --inv-text: #FAF6F2;
+    --border: #7A6E65;
+    --border-dark: #1A1211;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── SYSTEM STATUS BAR ── */
+  .sysbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0A0806;
+    color: #CEC9C0;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    padding: 8px 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sysbar .status-blink {
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ── MODULE ── */
+  .module {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 48px;
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border-dark);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .module.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .module-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 80px;
+    color: rgba(26,18,17,0.09);
+    line-height: 1;
+    padding-top: 4px;
+    user-select: none;
+  }
+  .module-inner {}
+  .module-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .module-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  /* divider */
+  .divider-wrap { margin-bottom: 28px; }
+  .divider-line {
+    height: 1px;
+    background: var(--border-dark);
+    width: 0;
+    transition: width .8s ease;
+  }
+  .divider-line.drawn { width: 100%; }
+
+  /* ── INVERTED MODULES (1, 8, 10) ── */
+  .module-inv {
+    background: var(--accent);
+    color: var(--inv-text);
+    margin: 0 -32px;
+    padding: 56px 32px;
+    display: block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .module-inv.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .module-inv-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 48px;
+  }
+  .module-inv .module-num {
+    color: rgba(250,246,242,0.15);
+  }
+  .module-inv .module-label {
+    color: rgba(250,246,242,0.6);
+  }
+  .module-inv .module-title {
+    color: var(--inv-text);
+  }
+  .module-inv .divider-line {
+    background: rgba(250,246,242,0.4);
+  }
+
+  /* ── TYPOGRAPHY ── */
+  h2 { font-size: 18px; font-weight: 700; margin: 24px 0 12px; }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 10px; }
+  p { font-size: 15px; margin-bottom: 12px; }
+  strong { font-weight: 700; }
+
+  /* ── KEY-VALUE CARD ROW ── */
+  .kv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border-dark);
+    margin-bottom: 20px;
+  }
+  .kv-item {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .kv-item:nth-child(even) { border-right: none; }
+  .kv-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .module-inv .kv-label { color: rgba(250,246,242,0.55); }
+  .kv-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .module-inv .kv-val { color: var(--inv-text); }
+  .module-inv .kv-grid { border-color: rgba(250,246,242,0.3); }
+  .module-inv .kv-item { border-color: rgba(250,246,242,0.2); }
+
+  /* Hero block (inside module 1) */
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: rgba(250,246,242,0.6);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .hero-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--inv-text);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: rgba(250,246,242,0.7);
+    margin-bottom: 20px;
+  }
+  .hero-formula {
+    background: rgba(250,246,242,0.12);
+    border: 1px solid rgba(250,246,242,0.3);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .hero-formula .formula-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(250,246,242,0.5);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .hero-formula .formula-val {
+    font-size: 15px;
+    color: var(--inv-text);
+    font-weight: 700;
+  }
+  .hero-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: rgba(250,246,242,0.5);
+    margin-top: 16px;
+  }
+
+  /* ── IF→THEN BLOCK ── */
+  .ifthen {
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    background: rgba(138,57,38,0.05);
+  }
+  .ifthen .it-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .ifthen .it-rule {
+    font-size: 15px;
+    color: var(--text);
+    margin: 4px 0;
+  }
+  .ifthen .it-kw {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .ifthen .it-ev {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── TABLE ── */
+  .dtable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .dtable th {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border-dark);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .dtable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  .dtable tr:last-child td { border-bottom: none; }
+
+  /* ── TOP10 CARD ── */
+  .top-card {
+    border: 1px solid var(--border-dark);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .top-card .tc-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .tc-rank {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 36px;
+  }
+  .tc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .tc-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .tc-section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+    margin: 10px 0 6px;
+  }
+  .tc-body {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .tc-quote {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  /* ── STAT PANEL (module 8) ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0;
+    border: 1px solid rgba(250,246,242,0.3);
+    margin-bottom: 20px;
+  }
+  .stat-item {
+    padding: 20px 16px;
+    border-right: 1px solid rgba(250,246,242,0.2);
+    border-bottom: 1px solid rgba(250,246,242,0.2);
+    text-align: center;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(250,246,242,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .stat-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--inv-text);
+  }
+
+  /* ── DETAILS/SUMMARY ── */
+  details { margin-bottom: 12px; }
+  summary {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    list-style: none;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: '▶ '; font-size: 10px; }
+  details[open] summary::before { content: '▼ '; }
+  details .details-body {
+    padding: 16px 0;
+  }
+  .module-inv details summary {
+    color: rgba(250,246,242,0.7);
+    border-color: rgba(250,246,242,0.2);
+  }
+
+  /* ── CONCLUSION BLOCK (module 10) ── */
+  .conc-group { margin-bottom: 20px; }
+  .conc-clabel {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(250,246,242,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(250,246,242,0.2);
+    padding-bottom: 6px;
+  }
+  .conc-list {
+    list-style: none;
+    padding: 0;
+  }
+  .conc-list li {
+    font-size: 15px;
+    color: var(--inv-text);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(250,246,242,0.1);
+    display: flex;
+    gap: 12px;
+  }
+  .conc-list li .li-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: rgba(250,246,242,0.4);
+    min-width: 20px;
+  }
+  .bapply {
+    font-size: 14px;
+    color: rgba(250,246,242,0.65);
+    margin-top: 4px;
+  }
+  .formula-final {
+    background: rgba(250,246,242,0.12);
+    border: 1px solid rgba(250,246,242,0.3);
+    padding: 16px 20px;
+    margin-top: 20px;
+  }
+  .fg-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(250,246,242,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .fg-body {
+    font-size: 14px;
+    color: var(--inv-text);
+    font-weight: 700;
+  }
+
+  /* ── TREND BLOCK ── */
+  .trend-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .tg-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .tg-body { color: var(--text); }
+  .tg-up { color: #2D7A3B; font-family: 'Space Mono', monospace; font-size: 13px; }
+  .tg-down { color: var(--accent); font-family: 'Space Mono', monospace; font-size: 13px; }
+  .tg-same { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 13px; }
+
+  /* ── INSPIRATION TABLE ── */
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  .ttable th {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border-dark);
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .ttable td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .t-meta { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); }
+  .t-title { font-size: 14px; color: var(--text); }
+
+  /* ── BELIEF CARD ── */
+  .belief-card {
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .belief-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .bsource {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  /* ── TENSION BLOCK ── */
+  .tension-block {
+    border: 1px solid var(--border-dark);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .tension-vs {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .tension-side {
+    padding: 10px;
+    background: rgba(138,57,38,0.05);
+    margin-bottom: 8px;
+  }
+  .tension-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .tension-text {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* ── META FOOTER ── */
+  .meta-foot {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .wrapper { padding: 0 16px; }
+    .module { grid-template-columns: 1fr; gap: 16px; }
+    .module-num { font-size: 48px; }
+    .module-inv { margin: 0 -16px; padding: 40px 16px; }
+    .module-inv-inner { grid-template-columns: 1fr; gap: 16px; }
+    .kv-grid { grid-template-columns: 1fr 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-name { font-size: 24px; }
+  }
+
+  /* ── REDUCED MOTION ── */
+  @media (prefers-reduced-motion: reduce) {
+    .module, .module-inv { transition: none; opacity: 1; transform: none; }
+    .divider-line { transition: none; width: 100%; }
+    .sysbar .status-blink { animation: none; }
+    .stat-val { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SYSTEM STATUS BAR -->
+<div class="sysbar">
+  SUBJECT: 碳酸饮料拜拜 &nbsp;|&nbsp; NOTES_ANALYZED: 39/61 &nbsp;|&nbsp; GENERATED: 2026-04-19 &nbsp;|&nbsp; STATUS: <span class="status-blink">DISTILLED</span>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 01 — 一眼看清（反转模块） -->
+<!-- ══════════════════════════════════════ -->
+<div class="module-inv" id="m01">
+  <div class="module-inv-inner">
+    <div class="module-num">01</div>
+    <div class="module-inner">
+      <div class="module-label">OVERVIEW / 一眼看清</div>
+      <div class="module-title">摘要卡片</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="hero-eyebrow">BLOGGER PROFILE</div>
+      <div class="hero-name">碳酸饮料拜拜</div>
+      <div class="hero-tag">时尚生活博主 · 小红书 · 141.9万粉丝</div>
+
+      <div class="kv-grid">
+        <div class="kv-item"><span class="kv-label">FOLLOWERS</span><span class="kv-val">141.9万</span></div>
+        <div class="kv-item"><span class="kv-label">LIKES + SAVES</span><span class="kv-val">1,493万</span></div>
+        <div class="kv-item"><span class="kv-label">AVG LIKES</span><span class="kv-val">19,520</span></div>
+        <div class="kv-item"><span class="kv-label">AVG SAVES</span><span class="kv-val">1,344</span></div>
+        <div class="kv-item"><span class="kv-label">VIDEO / IMAGE</span><span class="kv-val">31 / 8</span></div>
+        <div class="kv-item"><span class="kv-label">SAVE RATE</span><span class="kv-val">6.9%</span></div>
+      </div>
+
+      <div class="hero-formula">
+        <span class="formula-label">定位</span>
+        <div class="formula-val">时装周现场目击者 × 明星偶遇记录机器 × 松弛感美学践行者</div>
+      </div>
+      <div class="hero-formula">
+        <span class="formula-label">底层公式</span>
+        <div class="formula-val">高准入现场 × 明星钩子 × 无滤镜真实感</div>
+      </div>
+
+      <div class="hero-meta">
+        📊 采样范围：39 / 61 条笔记 &nbsp;|&nbsp; ⚠️ 基于 39 条蒸馏 &nbsp;|&nbsp; 生成时间：2026-04-19
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 02 — 人设拆解 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m02">
+  <div class="module-num">02</div>
+  <div class="module-inner">
+    <div class="module-label">PERSONA / 人设拆解</div>
+    <div class="module-title">她是谁？粉丝为什么追她？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>人设三板斧</h3>
+    <table class="dtable">
+      <thead><tr><th>关键词</th><th>一句话解读</th><th>数据佐证</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>时装周现场博主</strong></td>
+          <td>她不是报道时装周的媒体，是住进时装周里的人</td>
+          <td>时装周相关笔记占比 38.4%，均赞 22,200+</td>
+        </tr>
+        <tr>
+          <td><strong>明星偶遇专业户</strong></td>
+          <td>把每次偶遇拍成内容，让粉丝跟着"在场"</td>
+          <td>TOP10 中 7 条含明星名字（刘亦菲、谷爱凌、王一博、李龙馥、杨幂…）</td>
+        </tr>
+        <tr>
+          <td><strong>松弛感美学传播者</strong></td>
+          <td>用自己的穿搭和状态证明：好看不需要用力</td>
+          <td>TOP1「pov：当你觉得自己穿的很松弛来到巴黎」8.8万赞，评论里争论真假松弛</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>粉丝追她的本质原因</h3>
+    <p>粉丝把她当作<strong>通往那个世界的窗口</strong>——时装周、一线品牌秀场、与超模明星同框，这些体验对普通人来说遥不可及。她替粉丝"去了"，粉丝只需要跟着刷视频，那种"在场感"就能被代偿。本质是一种<strong>安全距离内的参与感</strong>。</p>
+
+    <h3>护城河分析</h3>
+    <p>她的护城河不是拍摄技术，不是剪辑风格，而是<strong>准入资格</strong>——能坐进 Chanel、LV、Prada、LOEWE 秀场前排的邀请函，是大多数博主终其一生拿不到的东西。做博主第四年的笔记（8 万赞）里粉丝追问"资源从哪里来"，说明这种稀缺性已成为粉丝集体意识。4 年积累加上品牌背书形成了<strong>正向飞轮</strong>：更多秀场 → 更多内容 → 更多粉丝 → 更好的秀场位置。</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 03 — 认知层 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m03">
+  <div class="module-num">03</div>
+  <div class="module-inner">
+    <div class="module-label">COGNITION / 认知层</div>
+    <div class="module-title">她怎么想？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);">⚠️ 基于 39 条笔记提取，样本有限仅供参考</p>
+
+    <h3>核心信念精华</h3>
+
+    <div class="belief-card">
+      <div class="belief-text">「真正的松弛感是一种状态，不是一种技巧」</div>
+      <div class="bsource">📍 出处：《pov：当你觉得自己穿的很松弛来到巴黎》(8.8万)、《golden shirt, effortless fits》(1.6万)、《最喜欢英国的天气。》(2.9万)</div>
+      <div class="bsource">评论"看起来就不松弛啊"恰好证明这个信念有争议张力，争议本身带来了传播</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「简单的单品，搭配对了，就是智性感」</div>
+      <div class="bsource">📍 出处：《golden shirt, effortless fits》("看起来简单的衬衫和牛仔裤 搭配的TORY BURCH Charlie包包 智性感拉满")、《put me in denim》(8116赞)</div>
+      <div class="bsource">与其他穿搭博主的"大牌堆砌"路线形成反差</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「在场就是最好的内容」</div>
+      <div class="bsource">📍 出处：《来看穿miumiu的女孩们！》(3.5万)、《时装周副业是去给巴黎铁塔点灯》(1.3万)、《当你在秀场一抬头发现这些人就坐在对面》</div>
+      <div class="bsource">她极少写攻略或测评，而是记录"此刻正在发生什么"</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「做博主是一种手艺，需要真正投入」</div>
+      <div class="bsource">📍 出处：《做博主第四年来聊一下大家都很好奇的问题》(8万赞，8176藏) — 粉丝评论"竟然是自己剪视频吗" 说明这个信念被充分验证</div>
+      <div class="bsource">该笔记收藏率 10.2%，远高于均值 6.9%，说明"方法论信念"最具留存价值</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「旅行是探索自己审美的最好方式」</div>
+      <div class="bsource">📍 出处：《在托斯卡纳一切都会变得很清透》(8935赞)、《"我与伦敦的游客照"》(1.9万)、《最喜欢英国的天气。》(2.9万)</div>
+      <div class="bsource">旅行类笔记均赞 18,840（伦敦系列），高于均值</div>
+    </div>
+
+    <details>
+      <summary>查看全部原文观点 →</summary>
+      <div class="details-body">
+        <div class="tc-quote">"看起来简单的衬衫和牛仔裤 搭配的TORY BURCH Charlie包包 智性感拉满" — 《golden shirt, effortless fits》(1.6万赞)</div>
+        <div class="tc-quote">"在lv秀场惊喜遇到亦菲姐！两年前也是在巴黎LV秀场合影 照片当时还打印出来贴在相册里🥹" — 《原来这样转场就能见到刘亦菲吗》(5.4万赞)</div>
+        <div class="tc-quote">"感谢Rocco让我和王一博合影上了🫰🏻🥰" — 《WOW！第一次看LOEWE就遇到了…》(3.2万赞)</div>
+        <div class="tc-quote">"路过大本钟的时候刚好日落 在等车的5分钟录了点视频" — 《"我与伦敦的游客照"》(1.9万赞)</div>
+        <div class="tc-quote">"米兰第一场秀开始了！看到很多喜欢的艺人 这次大秀只有15位超模…每个人换了四套look🤯" — 《在Prada秀场上遇到了…》(3.5万赞)</div>
+      </div>
+    </details>
+
+    <h3>认知框架</h3>
+    <p><strong>框架一：现场即内容</strong> — 她解读世界的方式是"我在哪里，就记录哪里"。不做策划选题，让场景驱动内容。证据：《时装周副业是去给巴黎铁塔点灯》《在BV秀场遇到了…》都是即时记录，没有预告。</p>
+    <p><strong>框架二：偶遇>策划</strong> — 她最高赞的内容几乎全是"没有剧本的相遇"。策划内容（开箱、日常Vlog）均赞低于均值，而偶遇系列始终处于高位。《就这样在香奈儿秀场上遇到了谷爱凌》(4.7万赞) 来自于一个自然的抬头瞬间，不是约好的合拍。</p>
+
+    <h3>观点张力</h3>
+    <div class="tension-block">
+      <div class="tension-side">
+        <div class="tension-label">观点 A</div>
+        <div class="tension-text">「松弛感是穿衣的最高境界」→ pov：当你觉得自己穿的很松弛来到巴黎 (8.8万赞)</div>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-side">
+        <div class="tension-label">观点 B</div>
+        <div class="tension-text">「一期年味十足大开箱」精心准备传统配件 (1.5万赞) — 这是高度"策划感"的内容</div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);margin-top:12px;">如何理解：她对"松弛"的定义是视觉和态度层面的，而非内容生产层面的。拍摄时可以非常用心，但镜头里要呈现"没有在用力"的状态。</p>
+    </div>
+
+    <h3>价值立场</h3>
+    <p>核心价值词（筛选后）：<strong>时装周</strong> / <strong>松弛感</strong> / <strong>智性感</strong> / <strong>effortless</strong> / <strong>松弛</strong> / <strong>时髦</strong></p>
+    <p>一句话总结：<strong>「碳酸饮料拜拜的内容底色是——用真实的在场感，传递时尚的可望可及性」</strong></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 04 — 策略层 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m04">
+  <div class="module-num">04</div>
+  <div class="module-inner">
+    <div class="module-label">STRATEGY / 策略层</div>
+    <div class="module-title">她怎么运营？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>系列内容规划</h3>
+    <table class="dtable">
+      <thead><tr><th>系列</th><th>条数</th><th>均赞</th><th>节奏</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td><strong>#小红书时装周群聊</strong></td><td>10条 (25.6%)</td><td>22,340</td><td>时装周季密集爆发</td><td>持续中（平台活动）</td></tr>
+        <tr><td><strong>#时装周长镜头</strong></td><td>5条 (12.8%)</td><td>22,113</td><td>与时装周群聊联动</td><td>近期减少</td></tr>
+        <tr><td><strong>#时髦捕手</strong></td><td>4条 (10.3%)</td><td>13,000</td><td>穿搭常态系列</td><td>稳定更新</td></tr>
+        <tr><td><strong>#RED新生代创作大赛</strong></td><td>4条 (10.3%)</td><td>18,206</td><td>活动周期集中</td><td>近期新增</td></tr>
+        <tr><td><strong>#不被定义单元</strong></td><td>3条</td><td>约15,000</td><td>旅行/生活系列</td><td>缓慢更新</td></tr>
+      </tbody>
+    </table>
+
+    <h3>蹭热点节奏</h3>
+    <p>她的"热点"不是大众热搜，而是<strong>垂直圈层的时效事件</strong>——时装周开幕、品牌大秀、明星出圈时刻。TOP10 中 7 条都是"某某出现在某某秀场"，时效窗口约 24-48 小时。常规日常内容均赞约 6,000-8,000，热点偶遇类均赞 30,000+，数据差距达 4-5 倍。</p>
+
+    <h3>运营决策准则</h3>
+    <div class="ifthen">
+      <div class="it-label">RULE 01</div>
+      <div class="it-rule"><span class="it-kw">If</span> 时装周开幕 <span class="it-kw">→ Then</span> 密集发布现场内容，标题直接命名品牌/明星</div>
+      <div class="it-ev">证据：时装周期间笔记密度显著提升，#小红书时装周群聊 系列 15 次出现</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 02</div>
+      <div class="it-rule"><span class="it-kw">If</span> 偶遇明星 <span class="it-kw">→ Then</span> 明星名字前置入标题，用感叹词+悬念开头</div>
+      <div class="it-ev">证据：《WOW！第一次看LOEWE就遇到了…》《omg…看我遇到了谁！🥹》《就这样在香奈儿秀场上遇到了谷爱凌😍》</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 03</div>
+      <div class="it-rule"><span class="it-kw">If</span> 有平台活动 <span class="it-kw">→ Then</span> 积极绑定活动标签，利用官方流量池</div>
+      <div class="it-ev">证据：#RED新生代创作大赛 出现 6 次，近期从 0% 增长到 20%；#小红书时装周群聊 15 次</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 04</div>
+      <div class="it-rule"><span class="it-kw">If</span> 内容偏日常/Vlog <span class="it-kw">→ Then</span> 保持松弛感基调，不做过度策划感的开头</div>
+      <div class="it-ev">证据：《一些最近🤪》《mini vlog🌴旅行就是换个地方逛街…》 均以轻描淡写的文字开场</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 05 — TOP10 爆款拆解 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m05">
+  <div class="module-num">05</div>
+  <div class="module-inner">
+    <div class="module-label">TOP NOTES / 爆款拆解</div>
+    <div class="module-title">TOP10 拆解</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <!-- TOP1 -->
+    <div class="top-card">
+      <div class="tc-header">
+        <div class="tc-rank">#01</div>
+        <div class="tc-title">pov：当你觉得自己穿的很松弛来到巴黎…</div>
+      </div>
+      <div class="tc-meta">赞 8.8万 &nbsp;|&nbsp; 藏 9,634 &nbsp;|&nbsp; 评 757 &nbsp;|&nbsp; 藏赞比 10.9% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">这条之所以爆，核心是<strong>制造了一个高价值的身份对比</strong>——"以为自己松弛"vs"到了巴黎才知道什么叫松弛"，这个落差让每个有过自我认知偏差的人都想点进来验证。标题用「pov」第二人称代入，瞬间消除了"这是她的故事"和"这是我的故事"之间的界限。藏赞比 10.9% 远超均值 6.9%，说明观众不只是点赞走人，而是主动存下来"以后再看"。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">你可以用同样的结构：<strong>先设定一个"以为自己做到了"的认知</strong>（我以为我会省钱 / 我以为我懂穿搭），<strong>再引入更高标准的参照物</strong>（到了某地/某场合才发现），结尾留开放式问号给评论区。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"看起来就不松弛啊，明显是精心打扮过的" — 说明读者最在意的是"松弛感是否真实"，这个争议反而是爆款的推手</div>
+      <div class="tc-quote">"瘦才容易穿的有松弛感" — 引出了体型焦虑讨论，扩大了话题边界</div>
+      <details>
+        <summary>查看完整正文 →</summary>
+        <div class="details-body tc-body">标签：#小红书时装周群聊 #时装周长镜头 （正文以图像内容为主，文字较少）</div>
+      </details>
+    </div>
+
+    <!-- TOP2 -->
+    <div class="top-card">
+      <div class="tc-header">
+        <div class="tc-rank">#02</div>
+        <div class="tc-title">做博主第四年来聊一下大家都很好奇的问题</div>
+      </div>
+      <div class="tc-meta">赞 8万 &nbsp;|&nbsp; 藏 8,176 &nbsp;|&nbsp; 评 2,045 &nbsp;|&nbsp; 藏赞比 10.2% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">这是唯一一条"方法论类"内容，却是第二高赞。原因：<strong>稀缺性</strong>——她极少正面聊"怎么做到的"，这次开口引爆了4年积累的好奇心。藏赞比 10.2% 是所有笔记中最高之一，说明这类内容的<strong>工具价值极高</strong>，观众会反复翻阅。评论 2045 条，是所有笔记中最多的，显示读者有大量问题要问。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body"><strong>沉淀足够久再说方法论。</strong>在某个领域做满 N 年后，突然开口讲经验，收藏率会远高于日常内容。节奏是：长期沉默积累期待 → 一次性释放 → 高收藏留存。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"竟然是自己剪视频吗，我以为助理会剪" — 读者最在意的是"真实付出的程度"，去神秘化比技术秘诀更有吸引力</div>
+    </div>
+
+    <!-- TOP3 -->
+    <div class="top-card">
+      <div class="tc-header">
+        <div class="tc-rank">#03</div>
+        <div class="tc-title">🤯原…原来这样转场就能见到刘亦菲吗</div>
+      </div>
+      <div class="tc-meta">赞 5.4万 &nbsp;|&nbsp; 藏 2,014 &nbsp;|&nbsp; 评 1,412 &nbsp;|&nbsp; 藏赞比 3.7% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">「刘亦菲」三个字是天然流量磁铁。但这条爆的真正原因不是明星，而是<strong>标题结构创造的惊喜感</strong>——"原来这样转场"暗示有个可复制的动作，悬念感驱动点击；正文里"两年前也是在巴黎LV秀场合影"增加了情感厚度，让偶遇变成了"命运感重逢"。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">偶遇明星的内容，<strong>不要只说"我遇到了谁"，要加入一个"这是怎么发生的"的因果逻辑</strong>，哪怕只是一个简单的转场动作描述，也能把偶然变成"可学习的经验"。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"神经蛙：豆包，删了这个视频" — 热评是网络梗而非正经讨论，说明这类内容会触发娱乐性互动，有利于评论区热度</div>
+    </div>
+
+    <!-- TOP4 -->
+    <div class="top-card">
+      <div class="tc-header">
+        <div class="tc-rank">#04</div>
+        <div class="tc-title">omg…看我遇到了谁！🥹</div>
+      </div>
+      <div class="tc-meta">赞 5.3万 &nbsp;|&nbsp; 藏 2,674 &nbsp;|&nbsp; 评 1,163 &nbsp;|&nbsp; 藏赞比 5.0% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">这条是<strong>悬念型标题的教科书</strong>——不透露是谁，用"看我遇到了谁"吊着好奇心，配合🥹惊喜表情强化情绪预期。正文里没有多余文字，让视频内容（李龙馥）自己说话。评论区"他真的很有素质"的大量讨论说明这条内容的二次话题是明星人品，进一步延长了传播生命周期。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">悬念型标题万能公式：<strong>"omg/wow + 情绪词 + 看我/遇到/发现 + 什么/谁（不说破）+ 情绪emoji"</strong>，这个结构可以用在任何"出人意料的遭遇"类内容上。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"你俩好像双胞胎" — 意外的颜值对比讨论，说明外形相似度是这类明星偶遇内容额外的话题点</div>
+    </div>
+
+    <!-- TOP5 -->
+    <div class="top-card">
+      <div class="tc-header">
+        <div class="tc-rank">#05</div>
+        <div class="tc-title">就这样在香奈儿秀场上遇到了谷爱凌😍</div>
+      </div>
+      <div class="tc-meta">赞 4.7万 &nbsp;|&nbsp; 藏 2,851 &nbsp;|&nbsp; 评 588 &nbsp;|&nbsp; 藏赞比 6.1% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">「香奈儿 + 谷爱凌」是双重高价值关键词叠加。区别于其他明星偶遇，这条爆的额外因素是<strong>谷爱凌给评论区贡献了大量讨论素材</strong>——"谷燕女士情绪价值给的真到位啊"说明谷爱凌本人的互动行为成为内容本身。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">遇到有高互动性的明星时，<strong>记录对方的行为细节而非只拍正脸</strong>——谷爱凌回应的方式比"她出现了"更值得记录，那才是真正的"情绪价值"内容。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"怪不得爱凌说我妈妈是最好的妈妈！" — 评论区自动把内容延伸到明星的家庭故事，内容生命力超出视频本身</div>
+    </div>
+
+    <h3 style="margin-top:24px;">TOP 6-10 快速拆解</h3>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>标题</th><th>赞/藏</th><th>爆款核心</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">06</td><td class="t-title">来看穿miumiu的女孩们！</td><td class="t-meta">3.5万/1287</td><td class="tg-body">多位明星同框，刘浩存"我躲起来了吗"的可爱互动成为评论热点</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">07</td><td class="t-title">在Prada秀场上遇到了…</td><td class="t-meta">3.5万/2107</td><td class="tg-body">杨幂+品牌大秀双重钩子，杨幂逆龄状态引发大量讨论</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">08</td><td class="t-title">WOW！第一次看LOEWE就遇到了…</td><td class="t-meta">3.2万/1614</td><td class="tg-body">王一博粉丝基数大，合影内容天然有高分享率</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">09</td><td class="t-title">最喜欢英国的天气。</td><td class="t-meta">2.9万/1031</td><td class="tg-body">极简标题+天气+伦敦，松弛感美学完美表达，评论区掀起城市联想</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">10</td><td class="t-title">"我与伦敦的游客照"</td><td class="t-meta">1.9万/1134</td><td class="tg-body">引号制造反差感（游客照但不像游客），日落场景天然高颜值</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 06 — 内容公式速查 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m06">
+  <div class="module-num">06</div>
+  <div class="module-inner">
+    <div class="module-label">FORMULA / 内容公式</div>
+    <div class="module-title">内容公式速查</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>标题公式 TOP5</h3>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>公式名</th><th>使用率</th><th>模板</th><th>博主原标题</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">1</td>
+          <td><strong>感叹型</strong></td>
+          <td class="t-meta">28.2%</td>
+          <td class="t-meta">「omg/wow/WOW！+ 情绪动词 + 悬念主体 + emoji」</td>
+          <td>"omg…看我遇到了谁！🥹"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">2</td>
+          <td><strong>悬念型</strong></td>
+          <td class="t-meta">25.6%</td>
+          <td class="t-meta">「pov：当你＿＿的时候…/ 场景触发 + 省略号」</td>
+          <td>"pov：当你觉得自己穿的很松弛来到巴黎…"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">3</td>
+          <td><strong>故事型</strong></td>
+          <td class="t-meta">12.8%</td>
+          <td class="t-meta">「就这样＋地点＋动作＋人/事 + emoji」</td>
+          <td>"就这样在香奈儿秀场上遇到了谷爱凌😍"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">4</td>
+          <td><strong>疑问型</strong></td>
+          <td class="t-meta">5.1%</td>
+          <td class="t-meta">「是谁？是谁又＿＿了？！（反问 + 反复）」</td>
+          <td>"是谁？是谁又拍上了Prada？！"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">5</td>
+          <td><strong>极简白描型</strong></td>
+          <td class="t-meta">~10%</td>
+          <td class="t-meta">「地点/场景 + 一句直白陈述」</td>
+          <td>"最喜欢英国的天气。" / "飞咯！"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>开头公式 TOP3</h3>
+    <div class="ifthen"><div class="it-label">开头模板 1 — 现场即时感</div><div class="it-rule">「地点/事件 + 惊喜遭遇 + 两年前的记忆」→ "在lv秀场惊喜遇到亦菲姐！两年前也是在巴黎LV秀场合影 照片当时还打印出来贴在相册里🥹"</div></div>
+    <div class="ifthen"><div class="it-label">开头模板 2 — 现场观察式</div><div class="it-rule">「活动名 + 规格数字 + 个人视角感叹」→ "米兰第一场秀开始了！看到很多喜欢的艺人 这次大秀只有15位超模…每个人换了四套look🤯"</div></div>
+    <div class="ifthen"><div class="it-label">开头模板 3 — 场景白描</div><div class="it-rule">「路过/发现 + 自然时机 + 动作」→ "路过大本钟的时候刚好日落 在等车的5分钟录了点视频"</div></div>
+
+    <h3>标签策略</h3>
+    <p><strong>固定标签</strong>（每篇必带）：#小红书时装周群聊 #时装周长镜头（时装周期间）/ #时髦捕手（常规穿搭期）</p>
+    <p><strong>活动绑定标签</strong>：#RED新生代创作大赛 #不被定义单元（平台活动周期内）</p>
+    <p><strong>热点人名标签</strong>：直接用明星真实名字作为标签（#刘亦菲 #谷爱凌 #王一博 #李龙馥 #杨幂）</p>
+    <p><strong>标签总数</strong>：每篇 4-6 个，不堆砌</p>
+
+    <p style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-top:16px;">→ 完整公式详见蒸馏 Skill 文件：碳酸饮料拜拜_创作指南.skill/SKILL.md</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 07 — 选题灵感 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m07">
+  <div class="module-num">07</div>
+  <div class="module-inner">
+    <div class="module-label">TOPICS / 选题灵感</div>
+    <div class="module-title">选题灵感 TOP15</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <table class="ttable">
+      <thead><tr><th>#</th><th>选题方向</th><th>难度</th><th>潜力</th><th>参考爆款</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td class="t-meta">01</td><td class="t-title">做博主第N年 — 年度复盘+心路历程</td><td>⭐⭐</td><td>🔥🔥🔥🔥</td><td>《做博主第四年…》(8万)</td><td>收藏率最高，稀缺且真诚</td></tr>
+        <tr><td class="t-meta">02</td><td class="t-title">秀场前排偶遇某明星 — 第一视角全程</td><td>⭐⭐⭐</td><td>🔥🔥🔥🔥</td><td>《pov：当你觉得…》(8.8万)</td><td>明星+在场感双重加成</td></tr>
+        <tr><td class="t-meta">03</td><td class="t-title">pov：当你第一次进入某奢侈品秀场</td><td>⭐⭐⭐</td><td>🔥🔥🔥🔥</td><td>《WOW！第一次看LOEWE…》(3.2万)</td><td>"第一次"天然有故事弧线</td></tr>
+        <tr><td class="t-meta">04</td><td class="t-title">极简穿搭+城市场景 — 一句话标题</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《最喜欢英国的天气。》(2.9万)</td><td>松弛感核心内容，低门槛高共鸣</td></tr>
+        <tr><td class="t-meta">05</td><td class="t-title">被品牌邀请看秀 — 入场到结束全记录</td><td>⭐⭐⭐</td><td>🔥🔥🔥</td><td>《被LV邀请看秀了！》(8619赞)</td><td>资质展示内容，强化信任感</td></tr>
+        <tr><td class="t-meta">06</td><td class="t-title">和朋友们fitcheck — 不同风格对比</td><td>⭐</td><td>🔥🔥</td><td>《尝试和不同风格的朋友们fitcheck》(6004赞)</td><td>多人出镜，评论区互动活跃</td></tr>
+        <tr><td class="t-meta">07</td><td class="t-title">游客照反差 — 旅游地+反传统构图</td><td>⭐</td><td>🔥🔥🔥</td><td>《"我与伦敦的游客照"》(1.9万)</td><td>引号+反差感天然引发点击</td></tr>
+        <tr><td class="t-meta">08</td><td class="t-title">如何在一个新城市/展览快速出片</td><td>⭐</td><td>🔥🔥</td><td>《看到很帅的车我就这样出片…》</td><td>方法论内容，高收藏价值</td></tr>
+        <tr><td class="t-meta">09</td><td class="t-title">时装周上的"时髦普通人"路人记录</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《来看穿miumiu的女孩们！》(3.5万)</td><td>人物群像，每个角色都是话题点</td></tr>
+        <tr><td class="t-meta">10</td><td class="t-title">一件单品 — 5种穿法对比</td><td>⭐</td><td>🔥🔥</td><td>《put me in denim》(8116赞)</td><td>实用内容，收藏率高</td></tr>
+        <tr><td class="t-meta">11</td><td class="t-title">和明星或博主撞衫了怎么办</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>（类推，基于撞衫话题热度）</td><td>天然话题，评论区自带讨论热情</td></tr>
+        <tr><td class="t-meta">12</td><td class="t-title">大开箱 — 活动礼物/品牌赠品</td><td>⭐</td><td>🔥🔥</td><td>《一期年味十足大开箱》(1.5万)</td><td>新年/节日节点流量自然高</td></tr>
+        <tr><td class="t-meta">13</td><td class="t-title">短发女生的穿搭禁区和公式</td><td>⭐</td><td>🔥🔥</td><td>《回归一下少年感ootd》</td><td>细分人群，#短发女生 标签精准</td></tr>
+        <tr><td class="t-meta">14</td><td class="t-title">某城市24小时穿搭特种兵</td><td>⭐⭐</td><td>🔥🔥</td><td>《mini vlog｜24小时首尔特种兵》</td><td>旅游+穿搭combo，场景丰富</td></tr>
+        <tr><td class="t-meta">15</td><td class="t-title">从冷门路人到热门爆款 — 时装周街拍发现记</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>（类推）</td><td>发掘感 + 时装周热点双加成</td></tr>
+      </tbody>
+    </table>
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);">排序逻辑：优先级 = 预估潜力 × (1/难度) &nbsp;|&nbsp; 预估潜力基于该方向现有笔记均赞 vs 博主整体均赞 19,520</p>
+  </div>
+</div>
+
+</div><!-- /.wrapper -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 08 — 数据面板（反转模块） -->
+<!-- ══════════════════════════════════════ -->
+<div class="module-inv" id="m08">
+  <div class="module-inv-inner">
+    <div class="module-num">08</div>
+    <div class="module-inner">
+      <div class="module-label">DATA / 数据面板</div>
+      <div class="module-title">核心数据</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="stat-grid">
+        <div class="stat-item">
+          <span class="stat-label">均赞</span>
+          <span class="stat-val" data-target="19520" data-decimals="0">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">均收藏</span>
+          <span class="stat-val" data-target="1344" data-decimals="0">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">均评论</span>
+          <span class="stat-val" data-target="791" data-decimals="0">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">藏赞比</span>
+          <span class="stat-val" data-target="6.9" data-decimals="1" data-suffix="%">0%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">爆款率（>均赞×3）</span>
+          <span class="stat-val" data-target="5.1" data-decimals="1" data-suffix="%">0%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">视频 / 图文</span>
+          <span class="stat-val">31 / 8</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>查看详细数据 →</summary>
+        <div class="details-body">
+          <table class="dtable" style="color:var(--inv-text);">
+            <thead><tr><th style="color:rgba(250,246,242,0.5);">指标</th><th style="color:rgba(250,246,242,0.5);">数值</th></tr></thead>
+            <tbody>
+              <tr><td>发布频率</td><td>双周更（均 9.3 天/条）</td></tr>
+              <tr><td>总笔记（主页）</td><td>61 条</td></tr>
+              <tr><td>本次采样</td><td>39 条有效（21 条 API 受限）</td></tr>
+              <tr><td>Emoji 使用率</td><td>53.8%（21/39条）</td></tr>
+              <tr><td>高频 Emoji</td><td>🏻 ☺ 🫰 📸 😆 🤳</td></tr>
+              <tr><td>平均正文长度</td><td>109 字</td></tr>
+              <tr><td>列表使用率</td><td>0.0%（纯叙述式）</td></tr>
+              <tr><td>小标题使用率</td><td>0.0%</td></tr>
+              <tr><td>超级爆款率（>均赞×10）</td><td>0 条（0%）</td></tr>
+              <tr><td>总赞（39条）</td><td>761,292</td></tr>
+              <tr><td>总收藏</td><td>52,431</td></tr>
+              <tr><td>总评论</td><td>30,870</td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="color:var(--inv-text);margin-top:16px;">标签 TOP20</h3>
+          <table class="dtable" style="color:var(--inv-text);">
+            <thead><tr><th style="color:rgba(250,246,242,0.5);">标签</th><th style="color:rgba(250,246,242,0.5);">出现次数</th></tr></thead>
+            <tbody>
+              <tr><td>#小红书时装周群聊</td><td class="t-meta">15</td></tr>
+              <tr><td>#时装周长镜头</td><td class="t-meta">12</td></tr>
+              <tr><td>#RED新生代创作大赛</td><td class="t-meta">6</td></tr>
+              <tr><td>#时髦捕手</td><td class="t-meta">6</td></tr>
+              <tr><td>#不被定义单元</td><td class="t-meta">3</td></tr>
+              <tr><td>#伦敦</td><td class="t-meta">3</td></tr>
+              <tr><td>#精神状态belike</td><td class="t-meta">2</td></tr>
+              <tr><td>#短发女生</td><td class="t-meta">2</td></tr>
+              <tr><td>#fitcheck</td><td class="t-meta">2</td></tr>
+              <tr><td>#ootd</td><td class="t-meta">2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 09 — 发展趋势 -->
+<!-- ══════════════════════════════════════ -->
+<div class="module" id="m09">
+  <div class="module-num">09</div>
+  <div class="module-inner">
+    <div class="module-label">TREND / 发展趋势</div>
+    <div class="module-title">内容重心的漂移</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <details>
+      <summary>📈 发展趋势（基于 39 条笔记，置信度：中 / 样本量有限）→</summary>
+      <div class="details-body">
+        <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">前半段（早期 19 条）vs 后半段（近期 20 条）</p>
+
+        <div class="trend-row"><span class="tg-body">#时装周长镜头</span><span class="t-meta">26.3% → 0.0%</span><span class="tg-down">📉 -26.3%</span></div>
+        <div class="trend-row"><span class="tg-body">#小红书时装周群聊</span><span class="t-meta">36.8% → 15.0%</span><span class="tg-down">📉 -21.8%</span></div>
+        <div class="trend-row"><span class="tg-body">#RED新生代创作大赛</span><span class="t-meta">0.0% → 20.0%</span><span class="tg-up">📈 +20.0%</span></div>
+        <div class="trend-row"><span class="tg-body">#伦敦 / 旅行内容</span><span class="t-meta">0.0% → 15.0%</span><span class="tg-up">📈 +15.0%</span></div>
+        <div class="trend-row"><span class="tg-body">经验分享</span><span class="t-meta">0.0% → 15.0%</span><span class="tg-up">📈 +15.0%</span></div>
+        <div class="trend-row"><span class="tg-body">#时髦捕手（穿搭日常）</span><span class="t-meta">10.5% → 10.0%</span><span class="tg-same">➡️ 稳定</span></div>
+
+        <br>
+        <h3>转型路径推断</h3>
+        <p><strong>阶段一（早期）：时装周重度内容博主</strong> — 几乎全部内容围绕时装周现场。依赖高密度的秀场邀请资源，是"季节性爆发"型博主。</p>
+        <p><strong>阶段二（当前）：生活内容延伸期</strong> — 开始加入旅行、个人经验、平台活动内容。可能是在降低对时装周季的依赖度，尝试常态化更新节奏。</p>
+        <p style="font-size:12px;color:var(--muted);">⚠️ 置信度标注：时间跨度估算基于帖子排序，非精确时间戳。样本 39 条，趋势判断仅供参考。</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+</div><!-- /.wrapper -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- MODULE 10 — 核心结论（反转模块） -->
+<!-- ══════════════════════════════════════ -->
+<div class="module-inv" id="m10">
+  <div class="module-inv-inner">
+    <div class="module-num">10</div>
+    <div class="module-inner">
+      <div class="module-label">CONCLUSION / 核心结论</div>
+      <div class="module-title">可以立刻用的结论</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="conc-group">
+        <span class="conc-clabel">✅ 3 件可以立刻复制的事</span>
+        <ul class="conc-list">
+          <li>
+            <span class="li-num">01</span>
+            <div>
+              <div>用「感叹型+悬念型」标题双组合，不提前说破</div>
+              <div class="bapply">操作：标题前加「omg / wow / pov：当你」，结尾不写完，改用省略号或情绪 emoji 收。适用于任何有反差/意外/偶遇的内容。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">02</span>
+            <div>
+              <div>用明星/品牌名字做标签钩子，让算法替你找流量</div>
+              <div class="bapply">操作：凡是内容中出现任何有知名度的人物/品牌，直接在标签里写他们的真实名字。不需要合作，自然偶遇也可以用。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">03</span>
+            <div>
+              <div>等积累足够久再发一次"方法论类"内容，藏赞比会远超日常</div>
+              <div class="bapply">操作：做满 1-2 年后，专门出一条"做这件事N年，来聊一下大家好奇的问题"，内容要去神秘化（比如"我是自己剪视频的"这种真实细节），收藏率会是日常内容的 1.5-2 倍。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="conc-group">
+        <span class="conc-clabel">⚠️ 3 件要避免的坑</span>
+        <ul class="conc-list">
+          <li>
+            <span class="li-num">01</span>
+            <div>
+              <div>不要用低质 CTA（"点赞收藏一起来！"）</div>
+              <div class="bapply">39 条笔记中几乎 0 次出现显式 CTA 催赞，评论区的互动是内容本身引发的，不是喊话出来的。强行催赞会破坏她的松弛感人设。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">02</span>
+            <div>
+              <div>不要过度策划"刻意感"内容</div>
+              <div class="bapply">她均赞最低的笔记恰好是 Vlog 类（6004赞）和测评类（4860赞），说明读者对"准备好了再发"的内容兴趣度低。她的高赞内容往往来自"就这样发生了"的即时感。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">03</span>
+            <div>
+              <div>不要离开时装周就停止更新</div>
+              <div class="bapply">早期内容重度依赖时装周季，旺季过后出现更新断层。近期内容开始加入伦敦旅行、个人经验，是在解决这个问题。如果要学她，要同步建立非季节性的内容系列。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="formula-final">
+        <span class="fg-label">底层公式</span>
+        <div class="fg-body">碳酸饮料拜拜的底层公式 = 高准入现场的稀缺性 × 明星偶遇的钩子效应 × 松弛感人设的信任积累</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+<div class="meta-foot">
+  DISTILLED BY: XHS-BLOGGER-ANALYZER &nbsp;|&nbsp; SUBJECT: 碳酸饮料拜拜 &nbsp;|&nbsp; SAMPLE: 39/61 NOTES &nbsp;|&nbsp; DATE: 2026-04-19<br>
+  ⚠️ 本报告基于公开数据自动分析生成，内容仅供参考，不代表博主本人立场
+</div>
+</div>
+
+<script>
+// ── 1. Scroll fadeInUp (IntersectionObserver) ──
+const allModules = document.querySelectorAll('.module, .module-inv');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Draw-in divider
+      const divider = entry.target.querySelector('.divider-line');
+      if (divider) setTimeout(() => divider.classList.add('drawn'), 200);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+allModules.forEach(m => observer.observe(m));
+
+// ── 2. Counter animation (module 8 stat-val) ──
+const counters = document.querySelectorAll('.stat-val[data-target]');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function animate(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = (decimals === 0
+        ? Math.round(current).toLocaleString('zh-CN')
+        : current.toFixed(decimals)) + suffix;
+      if (progress < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+    counterObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+</script>
+
+</body>
+</html>

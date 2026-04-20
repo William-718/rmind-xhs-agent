@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>腊月小九 — 博主蒸馏报告</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #CEC9C0;
+    --accent: #8A3926;
+    --text: #1A1211;
+    --muted: #7A6E65;
+    --inv-text: #FAF6F2;
+    --border: #7A6E65;
+    --border-dark: #1A1211;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .sysbar {
+    position: sticky; top: 0; z-index: 100;
+    background: #0A0806; color: #CEC9C0;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; letter-spacing: 0.05em;
+    padding: 8px 32px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sysbar .status-blink { animation: blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  .wrapper { max-width: 1000px; margin: 0 auto; padding: 0 32px; }
+
+  .module {
+    display: grid; grid-template-columns: 100px 1fr; gap: 48px;
+    padding: 56px 0; border-bottom: 1px solid var(--border-dark);
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .module.visible { opacity: 1; transform: translateY(0); }
+  .module-num {
+    font-family: 'Space Mono', monospace; font-size: 80px;
+    color: rgba(26,18,17,0.09); line-height: 1; padding-top: 4px; user-select: none;
+  }
+  .module-label {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .module-title {
+    font-family: 'Noto Serif SC', serif; font-size: 20px; font-weight: 700;
+    color: var(--text); margin-bottom: 16px; line-height: 1.3;
+  }
+
+  .divider-wrap { margin-bottom: 28px; }
+  .divider-line { height: 1px; background: var(--border-dark); width: 0; transition: width .8s ease; }
+  .divider-line.drawn { width: 100%; }
+
+  .module-inv {
+    background: var(--accent); color: var(--inv-text);
+    margin: 0 -32px; padding: 56px 32px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .module-inv.visible { opacity: 1; transform: translateY(0); }
+  .module-inv-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: 100px 1fr; gap: 48px;
+  }
+  .module-inv .module-num { color: rgba(250,246,242,0.15); }
+  .module-inv .module-label { color: rgba(250,246,242,0.6); }
+  .module-inv .module-title { color: var(--inv-text); }
+  .module-inv .divider-line { background: rgba(250,246,242,0.4); }
+
+  h2 { font-size: 18px; font-weight: 700; margin: 24px 0 12px; }
+  h3 { font-size: 16px; font-weight: 700; margin: 20px 0 10px; }
+  p { font-size: 15px; margin-bottom: 12px; }
+  strong { font-weight: 700; }
+
+  .kv-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0; border: 1px solid var(--border-dark); margin-bottom: 20px;
+  }
+  .kv-item { padding: 14px 16px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .kv-label {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+  }
+  .kv-val { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); }
+  .module-inv .kv-label { color: rgba(250,246,242,0.55); }
+  .module-inv .kv-val { color: var(--inv-text); }
+  .module-inv .kv-grid { border-color: rgba(250,246,242,0.3); }
+  .module-inv .kv-item { border-color: rgba(250,246,242,0.2); }
+
+  .hero-eyebrow { font-family:'Space Mono',monospace; font-size:12px; color:rgba(250,246,242,0.6); letter-spacing:.1em; margin-bottom:6px; }
+  .hero-name { font-size:32px; font-weight:700; color:var(--inv-text); margin-bottom:8px; line-height:1.2; }
+  .hero-tag { font-family:'Space Mono',monospace; font-size:13px; color:rgba(250,246,242,0.7); margin-bottom:20px; }
+  .hero-formula { background:rgba(250,246,242,0.12); border:1px solid rgba(250,246,242,0.3); padding:12px 16px; margin-bottom:12px; }
+  .hero-formula .formula-label { font-family:'Space Mono',monospace; font-size:11px; color:rgba(250,246,242,0.5); display:block; margin-bottom:4px; }
+  .hero-formula .formula-val { font-size:15px; color:var(--inv-text); font-weight:700; }
+  .hero-meta { font-family:'Space Mono',monospace; font-size:12px; color:rgba(250,246,242,0.5); margin-top:16px; }
+
+  .highlight-box {
+    background: rgba(138,57,38,0.08); border-left: 4px solid var(--accent);
+    padding: 12px 16px; margin-bottom: 16px;
+  }
+  .highlight-box .hl-label { font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .highlight-box .hl-val { font-size:15px; color:var(--text); font-weight:700; }
+
+  .ifthen { border-left: 4px solid var(--accent); padding: 12px 16px; margin-bottom: 12px; background: rgba(138,57,38,0.05); }
+  .ifthen .it-label { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .ifthen .it-rule { font-size:15px; color:var(--text); margin:4px 0; }
+  .ifthen .it-kw { font-family:'Space Mono',monospace; font-size:13px; color:var(--accent); font-weight:700; }
+  .ifthen .it-ev { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .dtable { width:100%; border-collapse:collapse; margin-bottom:20px; font-size:14px; }
+  .dtable th { font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); border-bottom:2px solid var(--border-dark); padding:8px 12px; text-align:left; }
+  .dtable td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; }
+  .dtable tr:last-child td { border-bottom:none; }
+
+  .top-card { border:1px solid var(--border-dark); padding:20px; margin-bottom:16px; }
+  .tc-header { display:flex; align-items:baseline; gap:12px; margin-bottom:12px; }
+  .tc-rank { font-family:'Space Mono',monospace; font-size:24px; font-weight:700; color:var(--accent); min-width:36px; }
+  .tc-title { font-size:15px; font-weight:700; color:var(--text); line-height:1.4; }
+  .tc-meta { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); margin-bottom:12px; }
+  .tc-section-label { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; border-left:3px solid var(--accent); padding-left:8px; margin:10px 0 6px; }
+  .tc-body { font-size:14px; color:var(--text); line-height:1.6; margin-bottom:8px; }
+  .tc-quote { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); border-left:2px solid var(--border); padding-left:10px; margin:6px 0; line-height:1.5; }
+
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0; border:1px solid rgba(250,246,242,0.3); margin-bottom:20px; }
+  .stat-item { padding:20px 16px; border-right:1px solid rgba(250,246,242,0.2); border-bottom:1px solid rgba(250,246,242,0.2); text-align:center; }
+  .stat-label { font-family:'Space Mono',monospace; font-size:11px; color:rgba(250,246,242,0.5); text-transform:uppercase; letter-spacing:.08em; display:block; margin-bottom:8px; }
+  .stat-val { font-family:'Space Mono',monospace; font-size:20px; font-weight:700; color:var(--inv-text); }
+
+  details { margin-bottom:12px; }
+  summary { font-family:'Space Mono',monospace; font-size:13px; color:var(--accent); cursor:pointer; padding:10px 0; border-bottom:1px solid var(--border); list-style:none; user-select:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::before { content:'▶ '; font-size:10px; }
+  details[open] summary::before { content:'▼ '; }
+  details .details-body { padding:16px 0; }
+  .module-inv details summary { color:rgba(250,246,242,0.7); border-color:rgba(250,246,242,0.2); }
+
+  .belief-card { border:1px solid var(--border); padding:14px 16px; margin-bottom:10px; }
+  .belief-text { font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .bsource { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); margin-bottom:4px; }
+
+  .tension-block { border:1px solid var(--border-dark); padding:16px; margin-bottom:16px; }
+  .tension-vs { font-family:'Space Mono',monospace; font-size:13px; color:var(--accent); font-weight:700; text-align:center; padding:8px 0; }
+  .tension-side { padding:10px; background:rgba(138,57,38,0.05); margin-bottom:8px; }
+  .tension-label { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); margin-bottom:4px; }
+  .tension-text { font-size:14px; color:var(--text); }
+
+  .conc-group { margin-bottom:20px; }
+  .conc-clabel { font-family:'Space Mono',monospace; font-size:11px; color:rgba(250,246,242,0.5); text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:10px; border-bottom:1px solid rgba(250,246,242,0.2); padding-bottom:6px; }
+  .conc-list { list-style:none; padding:0; }
+  .conc-list li { font-size:15px; color:var(--inv-text); padding:8px 0; border-bottom:1px solid rgba(250,246,242,0.1); display:flex; gap:12px; }
+  .conc-list li .li-num { font-family:'Space Mono',monospace; font-size:13px; color:rgba(250,246,242,0.4); min-width:20px; }
+  .bapply { font-size:14px; color:rgba(250,246,242,0.65); margin-top:4px; }
+  .formula-final { background:rgba(250,246,242,0.12); border:1px solid rgba(250,246,242,0.3); padding:16px 20px; margin-top:20px; }
+  .fg-label { font-family:'Space Mono',monospace; font-size:11px; color:rgba(250,246,242,0.5); text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:8px; }
+  .fg-body { font-size:14px; color:var(--inv-text); font-weight:700; }
+
+  .trend-row { display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .tg-up { color:#2D7A3B; font-family:'Space Mono',monospace; font-size:13px; }
+  .tg-down { color:var(--accent); font-family:'Space Mono',monospace; font-size:13px; }
+  .tg-same { color:var(--muted); font-family:'Space Mono',monospace; font-size:13px; }
+  .t-meta { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); }
+  .t-title { font-size:14px; color:var(--text); }
+
+  .ttable { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:16px; }
+  .ttable th { font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); border-bottom:2px solid var(--border-dark); padding:8px 10px; text-align:left; }
+  .ttable td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text); }
+
+  .meta-foot { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); text-align:center; padding:32px 0; border-top:1px solid var(--border); }
+
+  @media (max-width: 768px) {
+    .wrapper { padding: 0 16px; }
+    .module { grid-template-columns: 1fr; gap: 16px; }
+    .module-num { font-size: 48px; }
+    .module-inv { margin: 0 -16px; padding: 40px 16px; }
+    .module-inv-inner { grid-template-columns: 1fr; gap: 16px; }
+    .kv-grid { grid-template-columns: 1fr 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-name { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .module, .module-inv { transition: none; opacity: 1; transform: none; }
+    .divider-line { transition: none; width: 100%; }
+    .sysbar .status-blink { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sysbar">
+  SUBJECT: 腊月小九 &nbsp;|&nbsp; NOTES_ANALYZED: 30/32 &nbsp;|&nbsp; GENERATED: 2026-04-19 &nbsp;|&nbsp; STATUS: <span class="status-blink">DISTILLED</span>
+</div>
+
+<!-- MODULE 01 -->
+<div class="module-inv" id="m01">
+  <div class="module-inv-inner">
+    <div class="module-num">01</div>
+    <div class="module-inner">
+      <div class="module-label">OVERVIEW / 一眼看清</div>
+      <div class="module-title">摘要卡片</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="hero-eyebrow">BLOGGER PROFILE</div>
+      <div class="hero-name">腊月小九</div>
+      <div class="hero-tag">美食生活博主 · 小红书 · 523.6万粉丝</div>
+
+      <div class="kv-grid">
+        <div class="kv-item"><span class="kv-label">FOLLOWERS</span><span class="kv-val">523.6万</span></div>
+        <div class="kv-item"><span class="kv-label">LIKES + SAVES</span><span class="kv-val">5,543.5万</span></div>
+        <div class="kv-item"><span class="kv-label">AVG LIKES</span><span class="kv-val">27,909</span></div>
+        <div class="kv-item"><span class="kv-label">AVG SAVES</span><span class="kv-val">4,167</span></div>
+        <div class="kv-item"><span class="kv-label">SAVE RATE</span><span class="kv-val">14.9%</span></div>
+        <div class="kv-item"><span class="kv-label">POST FREQ</span><span class="kv-val">月更</span></div>
+      </div>
+
+      <div class="hero-formula">
+        <span class="formula-label">定位</span>
+        <div class="formula-val">高中住宿生妈妈 × 全能美食复刻机 × 家庭情感触发器</div>
+      </div>
+      <div class="hero-formula">
+        <span class="formula-label">底层公式</span>
+        <div class="formula-val">儿子情感钩子 × 扎实厨艺展示 × 真实家庭日常</div>
+      </div>
+      <div class="hero-formula">
+        <span class="formula-label">⚡ 核心异常值</span>
+        <div class="formula-val">藏赞比 14.9%（行业均值约 5-8%），TOP1 单篇藏赞比高达 50.7%</div>
+      </div>
+
+      <div class="hero-meta">
+        📊 采样范围：30 / 32 条笔记 &nbsp;|&nbsp; ⚠️ 基于 30 条蒸馏 &nbsp;|&nbsp; 生成时间：2026-04-19
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- MODULE 02 -->
+<div class="module" id="m02">
+  <div class="module-num">02</div>
+  <div class="module-inner">
+    <div class="module-label">PERSONA / 人设拆解</div>
+    <div class="module-title">她是谁？粉丝为什么追她？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>人设三板斧</h3>
+    <table class="dtable">
+      <thead><tr><th>关键词</th><th>一句话解读</th><th>数据佐证</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>爱子如命的妈妈</strong></td>
+          <td>儿子回家时做大餐，儿子走了做零食，儿子不在就"只能吃草"——一切内容都是对儿子的爱</td>
+          <td>TOP4 全部为儿子相关，均赞均在 6.1万+；TOP1 藏赞比 50.7%</td>
+        </tr>
+        <tr>
+          <td><strong>全能美食复刻机</strong></td>
+          <td>网红美食、餐厅爆款、地方小吃，来者不拒，挑战复刻</td>
+          <td>复刻美食系列均赞 21,500；"刘什么祥麻辣" 蹭热点 5.1万赞</td>
+        </tr>
+        <tr>
+          <td><strong>生活仪式感守护者</strong></td>
+          <td>哪怕儿子不在，也要好好对待自己，两人的饭和一个人的饭同样认真</td>
+          <td>《儿子不回来，老母亲只能吃草了》正文反差笑料 1.9万赞</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>粉丝追她的本质原因</h3>
+    <p>粉丝在她的内容里看到了<strong>"理想中的妈妈"</strong>——做得一手好饭，儿子回家就烧烤、儿子上学就做零食。评论区"妈妈缺一个女儿吗"（TOP1最高赞评论）说明读者想"认她为妈"，这是陪伴型博主的最高等级认同。她的内容本质是<strong>家庭温度的代偿品</strong>，看她的视频，像在看别人家里的烟火气。</p>
+
+    <h3>护城河分析</h3>
+    <p>她的护城河不是厨艺，而是<strong>真实的家庭叙事</strong>。儿子@王皓琦在评论区高频互动（"低调 低调 一口吃三个"、"馋的我在学校都没法好好学习了"），他本人也有粉丝基础，形成了<strong>双向流量飞轮</strong>：妈妈更新 → 儿子的粉丝来围观 → 儿子评论 → 引发更多互动。这种真实母子关系是任何人都无法复制的内容资产。</p>
+  </div>
+</div>
+
+<!-- MODULE 03 -->
+<div class="module" id="m03">
+  <div class="module-num">03</div>
+  <div class="module-inner">
+    <div class="module-label">COGNITION / 认知层</div>
+    <div class="module-title">她怎么想？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);">⚠️ 基于 30 条笔记提取，样本有限仅供参考</p>
+
+    <h3>核心信念精华</h3>
+
+    <div class="belief-card">
+      <div class="belief-text">「为孩子做的饭，是妈妈最直接的爱意表达」</div>
+      <div class="bsource">📍 出处：《只有孩子回家才想好好做饭！》(7.3万赞)、《投喂高中住宿生》(6.6万赞)、《高中儿子今天返校vlog！》(6.4万赞)、《什么是波奇饭？高中生开学前最后一天》(6.1万赞)</div>
+      <div class="bsource">TOP1 正文："这小子两周才回来一次，这不，2026年院子里第一场烧烤就给他安排上了！"——没有说爱你，但烧烤就是爱</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「真正的厨艺不需要教程，展示过程就是最好的分享」</div>
+      <div class="bsource">📍 出处：《自己做的biangbiang面，能有多好吃》(3.1万赞)、《复刻亲妈版方便面》(4.7万赞)、《一口饭，一口饭，任何人看到都想吃的一口饭》(4.4万赞)</div>
+      <div class="bsource">她极少写分步骤教程，而是让画面和食欲驱动点击——正文只有一句话，镜头让食物自己说话</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「挑战和复刻比日常分享更有传播力」</div>
+      <div class="bsource">📍 出处：《挑战做100份新年大礼包》、《挑战用一只蟹，做一桌年夜饭》、《复刻108元一颗的饺子》、《复刻亲妈版方便面》(4.7万赞)</div>
+      <div class="bsource">正文"就复刻方便面这手艺，我还真没服过谁"——挑战类内容自带竞争感和好奇心，天然驱动点击</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「儿子不在家，自己也要好好吃饭，但可以自嘲一下」</div>
+      <div class="bsource">📍 出处：《儿子不回来，老母亲只能吃草了》(1.9万赞)、《儿子明明都住校去了，我每天怎么还这么忙》(1.7万赞)</div>
+      <div class="bsource">标题说"只能吃草"，实际上做了一桌子好菜——这个反差制造了幽默感，也展示了她对生活的认真态度</div>
+    </div>
+
+    <div class="belief-card">
+      <div class="belief-text">「蹭热点要用"我来复刻/验证"的方式，而不是单纯跟风」</div>
+      <div class="bsource">📍 出处：《最近超火的那个刘什么祥麻辣》(5.1万赞) — 正文"我做出来了，尝尝是不是这个味"；《复刻108元一颗的饺子》</div>
+      <div class="bsource">她不是"我也来评论这个热点"，而是"我亲手做了，来验证它值不值"——用行动代替评论</div>
+    </div>
+
+    <details>
+      <summary>查看原文摘录 →</summary>
+      <div class="details-body">
+        <div class="tc-quote">"这小子两周才回来一次，这不，2026年院子里第一场烧烤就给他安排上了！" — 《只有孩子回家才想好好做饭！》(7.3万赞)</div>
+        <div class="tc-quote">"儿子高中住校怕他早餐吃不好，给他做几个可以冷吃的冰面包当早餐吧！" — 《投喂高中住宿生》(6.6万赞)</div>
+        <div class="tc-quote">"就复刻方便面这手艺，我还真没服过谁" — 《复刻亲妈版方便面》(4.7万赞)</div>
+        <div class="tc-quote">"我敢说你能吃十口" — 《一口饭寿司》(4.4万赞)</div>
+        <div class="tc-quote">"我做出来了，尝尝是不是这个味" — 《最近超火的那个刘什么祥麻辣》(5.1万赞)</div>
+        <div class="tc-quote">"一家子碳水脑袋，我敢说看完视频都得流口水" — 《自己做的biangbiang面》(3.1万赞)</div>
+        <div class="tc-quote">"满桌子都是他爱吃的，不知道这份热情能不能配得上逐渐高冷的儿子" — 《神兽假期回来啦》(3.7万赞)</div>
+        <div class="tc-quote">"热量炸弹啊 越吃越上瘾" — 《最近超火的那个刘什么祥麻辣》评论区回复</div>
+      </div>
+    </details>
+
+    <h3>认知框架</h3>
+    <p><strong>框架一：行动代替言说</strong> — 她从不说"我爱你"，但烧烤就是爱。从不说"我做到了"，但"我敢说看完都得流口水"是更强的自信表达。她用结果说话，用食物表达情感，用挑战代替叙述。证据：正文平均只有 54 字，但视频内容极其丰富。</p>
+    <p><strong>框架二：反差制造幽默</strong> — "只能吃草"但实际做了大餐；"不知道这份热情能不能配得上逐渐高冷的儿子"——她用反差制造轻松感，让严肃的母爱变得好笑，而不是沉重。证据：《儿子不回来，老母亲只能吃草了》1.9万赞，评论区集体共鸣。</p>
+
+    <h3>观点张力</h3>
+    <div class="tension-block">
+      <div class="tension-side">
+        <div class="tension-label">观点 A — 为孩子才认真做饭</div>
+        <div class="tension-text">《只有孩子回家才想好好做饭！》(7.3万赞) — 标题暗示"孩子不在=不好好做"</div>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-side">
+        <div class="tension-label">观点 B — 孩子不在也要认真对待自己</div>
+        <div class="tension-text">《儿子不回来，老母亲只能吃草了》(1.9万赞) — 实际上做了一大桌好菜</div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);margin-top:12px;">如何理解：这是刻意经营的叙事矛盾。"只有孩子回家才认真"制造了感情钩子，"吃草但实际很丰盛"制造了笑点。两种都是真实的——儿子是动力来源，但她对生活本身也很认真。这个矛盾是她内容的核心张力。</p>
+    </div>
+
+    <h3>价值立场</h3>
+    <p>核心价值词（筛选后）：<strong>投喂</strong> / <strong>复刻</strong> / <strong>挑战</strong> / <strong>住宿生</strong> / <strong>神兽</strong> / <strong>碳水</strong></p>
+    <p>一句话总结：<strong>「腊月小九的内容底色是——用食物丈量母爱，用挑战证明实力，用自嘲化解思念」</strong></p>
+  </div>
+</div>
+
+<!-- MODULE 04 -->
+<div class="module" id="m04">
+  <div class="module-num">04</div>
+  <div class="module-inner">
+    <div class="module-label">STRATEGY / 策略层</div>
+    <div class="module-title">她怎么运营？</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>系列内容规划</h3>
+    <table class="dtable">
+      <thead><tr><th>系列/主题</th><th>条数</th><th>均赞</th><th>节奏</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td><strong>儿子归来/返校系列</strong></td><td>5条 (16.7%)</td><td>~61,000</td><td>跟随儿子学校节奏（开学/放假）</td><td>核心系列，持续中</td></tr>
+        <tr><td><strong>复刻美食</strong></td><td>2条 (6.7%)</td><td>21,500</td><td>不定期，蹭热点时密集</td><td>持续中</td></tr>
+        <tr><td><strong>高能量的一天</strong></td><td>2条 (6.7%)</td><td>20,000</td><td>不定期</td><td>近期减少</td></tr>
+        <tr><td><strong>牛肉汉堡系列</strong></td><td>2条 (6.7%)</td><td>16,500</td><td>近期新增</td><td>增长中</td></tr>
+        <tr><td><strong>挑战系列</strong></td><td>约3条</td><td>~40,000</td><td>节假日节点发布</td><td>高效内容</td></tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <div class="hl-label">⚡ 最重要的策略洞察</div>
+      <div class="hl-val">儿子的学校日历 = 她的内容日历。开学→投喂返校零食，放假→烧烤大餐，寒暑假→儿子在家的日常。这是完全跟随外部节奏的内容规划，不需要另外选题。</div>
+    </div>
+
+    <h3>蹭热点节奏</h3>
+    <p>她蹭热点的方式是<strong>「复刻验证」</strong>而非简单跟风。《最近超火的那个刘什么祥麻辣》(5.1万赞) — 标题故意写错名字（"刘什么祥"）制造亲切感，正文"我做出来了，尝尝是不是这个味"是行动型蹭热点，比单纯讨论热点更有差异性。</p>
+
+    <h3>运营决策准则</h3>
+    <div class="ifthen">
+      <div class="it-label">RULE 01</div>
+      <div class="it-rule"><span class="it-kw">If</span> 儿子回家（放假/周末） <span class="it-kw">→ Then</span> 做大餐、烧烤，全程记录，标题突出"儿子回来了"</div>
+      <div class="it-ev">证据：《只有孩子回家才想好好做饭！》7.3万赞 | 《神兽假期回来啦》3.7万赞</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 02</div>
+      <div class="it-rule"><span class="it-kw">If</span> 儿子返校 <span class="it-kw">→ Then</span> 制作便携零食/早餐，标题用"投喂/返校"关键词</div>
+      <div class="it-ev">证据：《投喂高中住宿生》6.6万赞 | 《高中儿子今天返校vlog！》6.4万赞</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 03</div>
+      <div class="it-rule"><span class="it-kw">If</span> 有美食类热点 <span class="it-kw">→ Then</span> 亲自复刻，标题用"最近超火的…我来试试"结构</div>
+      <div class="it-ev">证据：《最近超火的那个刘什么祥麻辣》5.1万赞；复刻108元饺子、复刻广式早茶</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 04</div>
+      <div class="it-rule"><span class="it-kw">If</span> 节假日节点（新年/开学） <span class="it-kw">→ Then</span> 发起挑战类内容（量大/难度高）</div>
+      <div class="it-ev">证据：《挑战做100份新年大礼包》《挑战用一只蟹做一桌年夜饭》均在节假日前后发布</div>
+    </div>
+    <div class="ifthen">
+      <div class="it-label">RULE 05</div>
+      <div class="it-rule"><span class="it-kw">If</span> 发布任何涉及儿子的内容 <span class="it-kw">→ Then</span> 正文 @王皓琦，触发双向评论区流量</div>
+      <div class="it-ev">证据：30条笔记中至少12条含 @王皓琦；儿子每次都在评论区回复，带来额外互动</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 05 -->
+<div class="module" id="m05">
+  <div class="module-num">05</div>
+  <div class="module-inner">
+    <div class="module-label">TOP NOTES / 爆款拆解</div>
+    <div class="module-title">TOP10 拆解</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="top-card">
+      <div class="tc-header"><div class="tc-rank">#01</div><div class="tc-title">只有孩子回家才想好好做饭！</div></div>
+      <div class="tc-meta">赞 7.3万 &nbsp;|&nbsp; 藏 3.7万 &nbsp;|&nbsp; 评 1,141 &nbsp;|&nbsp; 藏赞比 50.7% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">这条之所以爆，核心是<strong>标题击中了"妈妈的爱要有理由"这个普遍情感逻辑</strong>——"只有孩子回来才好好做饭"这句话让每个曾经一个人对付饭的读者都在想"我妈也是这样的"。藏赞比 50.7% 异常惊人，意味着每2个点赞就有1个收藏——这是纯情感类内容的特征，读者不是在记录食谱，而是在收藏"妈妈的爱意"这个情感符号。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">用<strong>"只有 X 发生，才…"的条件句标题</strong>制造情感缺口。条件句暗示"X 不发生就没有"，让读者对这个条件产生保护欲或共鸣。适用于一切亲情/友情/爱情触发的场景内容。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"我觉得妈妈缺一个女儿" — 最高共鸣评论，说明读者最在意的是"想加入这个家庭"，而不是"想学做烤肉"</div>
+      <div class="tc-quote">"王皓琦：这个点 着实饿了" — 儿子本人的评论大量点赞，双向流量效应</div>
+    </div>
+
+    <div class="top-card">
+      <div class="tc-header"><div class="tc-rank">#02</div><div class="tc-title">投喂高中住宿生</div></div>
+      <div class="tc-meta">赞 6.6万 &nbsp;|&nbsp; 藏 7,934 &nbsp;|&nbsp; 评 493 &nbsp;|&nbsp; 藏赞比 12.0% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">标题"投喂高中住宿生"是一个极精准的细分场景词——中国有大量高中住宿生的家长，这个词直接命中了他们的现实焦虑（孩子在学校吃什么）。正文"怕他早餐吃不好"道出了所有住宿生家长的心声。冰面包这个具体产品也有收藏价值，因为读者会想"我也给我孩子做"。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body"><strong>细分场景词比泛类词更精准</strong>：不说"给孩子做早餐"，而是说"投喂高中住宿生"。圈定一个具体的读者身份，收藏率会远高于泛类内容，因为这个读者觉得"这是专门为我做的"。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"停停停，我才多久没看你换儿子了" — 读者对儿子成长高度关注，说明这个家庭故事已经形成了粉丝的长期追踪动力</div>
+    </div>
+
+    <div class="top-card">
+      <div class="tc-header"><div class="tc-rank">#03</div><div class="tc-title">高中儿子今天返校vlog！</div></div>
+      <div class="tc-meta">赞 6.4万 &nbsp;|&nbsp; 藏 3,566 &nbsp;|&nbsp; 评 706 &nbsp;|&nbsp; 藏赞比 5.6% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">返校这个时间节点本身就是流量节点——全国开学日前后搜索量大增。但这条爆的真正原因是她在评论区里写的那段话："上学期刚送他去住校，特别担心他不适应住宿生活，没想到半个月后，人家都不愿意回家了"——这段话不在正文里，而在评论区，让读者觉得"在和她聊天"，制造了高亲密感。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body"><strong>把最真实的情感放在评论区，而不是正文</strong>。正文简洁，评论区"倾诉"——这样读者会有"被信任"的感觉，评论互动率会更高。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"用户已注销：刚认识:你妈 熟了后:咱妈" — 说明长期粉丝对她已经产生了家人般的情感认同</div>
+    </div>
+
+    <div class="top-card">
+      <div class="tc-header"><div class="tc-rank">#04</div><div class="tc-title">什么是波奇饭？高中生开学前最后一天</div></div>
+      <div class="tc-meta">赞 6.1万 &nbsp;|&nbsp; 藏 4,723 &nbsp;|&nbsp; 评 641 &nbsp;|&nbsp; 藏赞比 7.7% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">"波奇饭"是二次元热词，出现在美食博主的标题里制造了圈层碰撞感——知道这个词的二次元粉丝好奇她怎么解读，不知道这个词的普通人好奇这是什么。双重好奇心驱动点击。"开学前最后一天"的时间标注制造了紧迫感和情感余韵。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body"><strong>在垂直领域内容里植入跨圈层热词</strong>，制造"这是什么搭配"的陌生感好奇心，是低成本提高点击率的方法。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"阿屿：不认识周杰伦 真的吗还有这么小众的词汇" — 评论区引发知识考古讨论，内容生命力延长</div>
+    </div>
+
+    <div class="top-card">
+      <div class="tc-header"><div class="tc-rank">#05</div><div class="tc-title">最近超火的那个刘什么祥麻辣</div></div>
+      <div class="tc-meta">赞 5.1万 &nbsp;|&nbsp; 藏 5,178 &nbsp;|&nbsp; 评 537 &nbsp;|&nbsp; 藏赞比 10.2% &nbsp;|&nbsp; 视频</div>
+      <div class="tc-section-label">为什么爆</div>
+      <div class="tc-body">标题故意写错名字（"刘什么祥"而非"刘文祥"）制造了亲切的"大妈不知道热梗"人设感，读者会觉得"哈哈好可爱"而不是"假装不懂"。正文只有一句话"我做出来了，尝尝是不是这个味"——行动型蹭热点，比讨论热点本身更有差异性。藏赞比 10.2% 说明读者在收藏这个配方。</div>
+      <div class="tc-section-label">可借鉴点</div>
+      <div class="tc-body">蹭热点时，<strong>故意用"不那么精准"的描述方式</strong>（"刘什么祥"）制造亲切感，比精准使用热词更有辨识度。同时正文只说"我做了"，不解释热点，留白给读者自己理解。</div>
+      <div class="tc-section-label">评论区洞察</div>
+      <div class="tc-quote">"小红薯y2q0sirz：刘文祥应该是周小闹带火的吧" — 评论区帮她补充了热点背景，内容获得二次传播</div>
+    </div>
+
+    <h3 style="margin-top:24px;">TOP 6-10 快速拆解</h3>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>标题</th><th>赞/藏</th><th>爆款核心</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">06</td><td class="t-title">复刻亲妈版方便面</td><td class="t-meta">4.7万/3274</td><td>"就复刻方便面这手艺，我还真没服过谁"——强自信句式引发挑战欲</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">07</td><td class="t-title">一口饭，一口饭，任何人看到都想吃的一口饭</td><td class="t-meta">4.4万/6283</td><td>重复式标题强化食欲暗示，藏赞比 14.3% 说明配方收藏价值高</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">08</td><td class="t-title">（神兽假期回来啦）</td><td class="t-meta">3.7万/3625</td><td>儿子高冷成长记，"逐渐高冷的儿子"制造时间流逝的情感共鸣</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">09</td><td class="t-title">这样的小碗粉，一人吃五六七八碗不过分吧</td><td class="t-meta">3.4万/2673</td><td>数字叠加（五六七八）强化夸张感，食量挑战类标题激活互动</td></tr>
+        <tr><td style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);">10</td><td class="t-title">自己做的biangbiang面，能有多好吃</td><td class="t-meta">3.1万/5843</td><td>悬念式反问，藏赞比 18.8% 极高，配方收藏价值突出</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODULE 06 -->
+<div class="module" id="m06">
+  <div class="module-num">06</div>
+  <div class="module-inner">
+    <div class="module-label">FORMULA / 内容公式</div>
+    <div class="module-title">内容公式速查</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <h3>标题公式 TOP5</h3>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>公式名</th><th>使用率</th><th>模板</th><th>博主原标题</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">1</td>
+          <td><strong>疑问型</strong></td>
+          <td class="t-meta">21.4%</td>
+          <td class="t-meta">「什么是XX？+ 场景副标题」/ 「XX怎么做才好吃」</td>
+          <td>"什么是波奇饭？高中生开学前最后一天"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">2</td>
+          <td><strong>感叹型</strong></td>
+          <td class="t-meta">10.7%</td>
+          <td class="t-meta">「只有XX，才想好好做饭！」/ 「谁懂啊！被这个XX硬控了」</td>
+          <td>"只有孩子回家才想好好做饭！"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">3</td>
+          <td><strong>故事型</strong></td>
+          <td class="t-meta">10.7%</td>
+          <td class="t-meta">「角色 + 明明XX，我怎么还XX」</td>
+          <td>"儿子明明都住校去了，我每天怎么还这么忙"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">4</td>
+          <td><strong>挑战型</strong></td>
+          <td class="t-meta">~10%</td>
+          <td class="t-meta">「挑战做XX份 / 挑战用X只YY做一桌ZZ」</td>
+          <td>"挑战做100份新年大礼包" / "挑战用一只蟹做一桌年夜饭"</td>
+        </tr>
+        <tr>
+          <td style="font-family:'Space Mono',monospace;color:var(--accent);">5</td>
+          <td><strong>程度夸张型</strong></td>
+          <td class="t-meta">~7%</td>
+          <td class="t-meta">「任何人看到都想XX」/ 「一人吃X六七八碗不过分吧」</td>
+          <td>"一口饭，一口饭，任何人看到都想吃的一口饭"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>开头公式 TOP3</h3>
+    <div class="ifthen"><div class="it-label">开头模板 1 — 儿子触发式</div><div class="it-rule">「[儿子状态描述] + [妈妈的反应/行动]」→ "这小子两周才回来一次，这不，2026年院子里第一场烧烤就给他安排上了！"</div></div>
+    <div class="ifthen"><div class="it-label">开头模板 2 — 担心型投喂</div><div class="it-rule">「[担心孩子某件事] + [所以做了某食物]」→ "儿子高中住校怕他早餐吃不好，给他做几个可以冷吃的冰面包当早餐吧！"</div></div>
+    <div class="ifthen"><div class="it-label">开头模板 3 — 挑战宣言</div><div class="it-rule">「强自信陈述句 + @儿子」→ "就复刻方便面这手艺，我还真没服过谁@王皓琦"</div></div>
+
+    <h3>CTA 策略</h3>
+    <p>她的 CTA 很克制：<strong>收藏引导仅占 13.3%</strong>，且多以隐性方式出现（"我敢说你能吃十口"这种挑战句，本质上是在引导互动，不是硬催赞）。唯一明显的 CTA 是正文里的反问句，引导读者回答（"你们是喜欢吃粉还是吃面？"）。</p>
+    <p><strong>标签总数</strong>：每篇 2-5 个，不堆砌；必 @王皓琦（儿子相关内容）。</p>
+
+    <p style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);margin-top:16px;">→ 完整公式详见蒸馏 Skill 文件：腊月小九_创作指南.skill/SKILL.md</p>
+  </div>
+</div>
+
+<!-- MODULE 07 -->
+<div class="module" id="m07">
+  <div class="module-num">07</div>
+  <div class="module-inner">
+    <div class="module-label">TOPICS / 选题灵感</div>
+    <div class="module-title">选题灵感 TOP15</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <table class="ttable">
+      <thead><tr><th>#</th><th>选题方向</th><th>难度</th><th>潜力</th><th>参考爆款</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td class="t-meta">01</td><td class="t-title">只有XX才认真做饭 — 条件句情感触发</td><td>⭐</td><td>🔥🔥🔥🔥</td><td>《只有孩子回家才想好好做饭！》(7.3万)</td><td>标题公式可复用，情感钩子强</td></tr>
+        <tr><td class="t-meta">02</td><td class="t-title">投喂某细分群体 — 场景精准命名</td><td>⭐</td><td>🔥🔥🔥🔥</td><td>《投喂高中住宿生》(6.6万)</td><td>"投喂"+"细分场景"=精准召唤目标读者</td></tr>
+        <tr><td class="t-meta">03</td><td class="t-title">挑战用一个/一种食材做一桌饭</td><td>⭐⭐</td><td>🔥🔥🔥🔥</td><td>《挑战用一只蟹做一桌年夜饭》</td><td>挑战类高传播，难度限制制造悬念</td></tr>
+        <tr><td class="t-meta">04</td><td class="t-title">复刻最近超火的网红美食</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《最近超火的那个刘什么祥麻辣》(5.1万)</td><td>蹭热点+验证，标题故意写错更亲切</td></tr>
+        <tr><td class="t-meta">05</td><td class="t-title">明明XX了，我怎么还这么忙 — 反差故事</td><td>⭐</td><td>🔥🔥🔥</td><td>《儿子明明都住校去了，我每天怎么还这么忙》</td><td>生活反差天然共鸣，代入感强</td></tr>
+        <tr><td class="t-meta">06</td><td class="t-title">节假日前最后一顿/开学前最后一天</td><td>⭐</td><td>🔥🔥🔥</td><td>《什么是波奇饭？高中生开学前最后一天》(6.1万)</td><td>时间节点天然带流量</td></tr>
+        <tr><td class="t-meta">07</td><td class="t-title">任何人看到都想吃的一口XX</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《一口饭，一口饭，任何人看到都想吃的一口饭》(4.4万)</td><td>程度夸张+反复强调，制造食欲</td></tr>
+        <tr><td class="t-meta">08</td><td class="t-title">复刻XX元的网红食品，划不划算</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《复刻108元一颗的饺子》</td><td>价格对比天然制造好奇心</td></tr>
+        <tr><td class="t-meta">09</td><td class="t-title">我不在家，自己只能吃XX — 自嘲日常</td><td>⭐</td><td>🔥🔥</td><td>《儿子不回来，老母亲只能吃草了》(1.9万)</td><td>标题自嘲+实际丰盛=反差笑点</td></tr>
+        <tr><td class="t-meta">10</td><td class="t-title">这道菜能有多好吃 — 悬念反问</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《自己做的biangbiang面，能有多好吃》(3.1万, 藏赞比18.8%)</td><td>悬念驱动点击，配方价值驱动收藏</td></tr>
+        <tr><td class="t-meta">11</td><td class="t-title">足足花了X小时，复刻某地美食</td><td>⭐⭐</td><td>🔥🔥</td><td>《足足花了4个小时，复刻广式早茶》</td><td>时间成本强化"值得收藏"的感知</td></tr>
+        <tr><td class="t-meta">12</td><td class="t-title">挑战不用称/不油炸做某甜点</td><td>⭐⭐</td><td>🔥🔥</td><td>《挑战不用称不油炸也可以做的甜甜圈》(7396赞)</td><td>降低门槛的挑战更有参考价值</td></tr>
+        <tr><td class="t-meta">13</td><td class="t-title">虾/某食材怎么做才好吃 — 工具型问答</td><td>⭐</td><td>🔥🔥</td><td>《虾怎么做才好吃》(1.9万)</td><td>工具型标题，搜索流量稳定</td></tr>
+        <tr><td class="t-meta">14</td><td class="t-title">几分钟学会三天食谱/某时段全套</td><td>⭐⭐</td><td>🔥🔥</td><td>《几分钟学会三天食谱》(1.2万)</td><td>高密度实用内容，收藏率高</td></tr>
+        <tr><td class="t-meta">15</td><td class="t-title">现场丑，关我成片什么事？ — 反差幽默</td><td>⭐</td><td>🔥🔥</td><td>《现场丑，关我成片什么事？》(8795赞)</td><td>自嘲式幽默，轻松内容补充节奏</td></tr>
+      </tbody>
+    </table>
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);">排序逻辑：优先级 = 预估潜力 × (1/难度) | 预估潜力基于该方向现有笔记均赞 vs 博主整体均赞 27,909</p>
+  </div>
+</div>
+
+</div><!-- /.wrapper -->
+
+<!-- MODULE 08 -->
+<div class="module-inv" id="m08">
+  <div class="module-inv-inner">
+    <div class="module-num">08</div>
+    <div class="module-inner">
+      <div class="module-label">DATA / 数据面板</div>
+      <div class="module-title">核心数据</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="stat-grid">
+        <div class="stat-item"><span class="stat-label">均赞</span><span class="stat-val" data-target="27909" data-decimals="0">0</span></div>
+        <div class="stat-item"><span class="stat-label">均收藏</span><span class="stat-val" data-target="4167" data-decimals="0">0</span></div>
+        <div class="stat-item"><span class="stat-label">均评论</span><span class="stat-val" data-target="387" data-decimals="0">0</span></div>
+        <div class="stat-item"><span class="stat-label">藏赞比</span><span class="stat-val" data-target="14.9" data-decimals="1" data-suffix="%">0%</span></div>
+        <div class="stat-item"><span class="stat-label">爆款率</span><span class="stat-val">0%</span></div>
+        <div class="stat-item"><span class="stat-label">全视频</span><span class="stat-val">30 / 0</span></div>
+      </div>
+
+      <details>
+        <summary>查看详细数据 →</summary>
+        <div class="details-body">
+          <table class="dtable" style="color:var(--inv-text);">
+            <thead><tr><th style="color:rgba(250,246,242,0.5);">指标</th><th style="color:rgba(250,246,242,0.5);">数值</th></tr></thead>
+            <tbody>
+              <tr><td>发布频率</td><td>低频月更（均 27.3 天/条）</td></tr>
+              <tr><td>总笔记（主页）</td><td>32 条</td></tr>
+              <tr><td>本次采样</td><td>30 条有效（7 条 API 受限）</td></tr>
+              <tr><td>Emoji 使用率</td><td>0.0%（完全不使用 Emoji）</td></tr>
+              <tr><td>平均正文长度</td><td>54 字（极简风格）</td></tr>
+              <tr><td>列表使用率</td><td>0.0%</td></tr>
+              <tr><td>小标题使用率</td><td>0.0%</td></tr>
+              <tr><td>总赞（30条）</td><td>837,293</td></tr>
+              <tr><td>总收藏</td><td>125,036</td></tr>
+              <tr><td>总评论</td><td>11,629</td></tr>
+            </tbody>
+          </table>
+          <h3 style="color:var(--inv-text);margin-top:16px;">标签 TOP10</h3>
+          <table class="dtable" style="color:var(--inv-text);">
+            <thead><tr><th style="color:rgba(250,246,242,0.5);">标签</th><th style="color:rgba(250,246,242,0.5);">次数</th></tr></thead>
+            <tbody>
+              <tr><td>#美食VLOG</td><td class="t-meta">2</td></tr>
+              <tr><td>#高能量的一天</td><td class="t-meta">2</td></tr>
+              <tr><td>#复刻美食</td><td class="t-meta">2</td></tr>
+              <tr><td>#牛肉汉堡</td><td class="t-meta">2</td></tr>
+              <tr><td>#不粘锅</td><td class="t-meta">2</td></tr>
+              <tr><td>#烤肉 / #美食日常 / #返校 等</td><td class="t-meta">各1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- MODULE 09 -->
+<div class="module" id="m09">
+  <div class="module-num">09</div>
+  <div class="module-inner">
+    <div class="module-label">TREND / 发展趋势</div>
+    <div class="module-title">内容重心的漂移</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <details>
+      <summary>📈 发展趋势（基于 30 条笔记，置信度：中 / 样本量有限）→</summary>
+      <div class="details-body">
+        <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">前半段（早期 15 条）vs 后半段（近期 15 条）</p>
+
+        <div class="trend-row"><span>"其他"泛美食日常内容</span><span class="t-meta">73.3% → 40.0%</span><span class="tg-down">📉 -33.3%</span></div>
+        <div class="trend-row"><span>高能量的一天</span><span class="t-meta">13.3% → 0.0%</span><span class="tg-down">📉 -13.3%</span></div>
+        <div class="trend-row"><span>牛肉汉堡系列</span><span class="t-meta">0.0% → 13.3%</span><span class="tg-up">📈 +13.3%</span></div>
+        <div class="trend-row"><span>不粘锅品牌合作</span><span class="t-meta">0.0% → 13.3%</span><span class="tg-up">📈 +13.3%</span></div>
+        <div class="trend-row"><span>美食VLOG / 日常Vlog</span><span class="t-meta">0.0% → 13.4%</span><span class="tg-up">📈 增加</span></div>
+
+        <br>
+        <h3>转型路径推断</h3>
+        <p><strong>阶段一（早期）：泛美食日常为主</strong>，以"妈妈的厨房"为核心场景，儿子相关内容零星出现。</p>
+        <p><strong>阶段二（近期）：垂直化 + 商业化并行</strong>，牛肉汉堡系列和不粘锅品牌合作同步增长，说明她在尝试垂直品类深挖和品牌变现，同时保留儿子情感主线。</p>
+        <p style="font-size:12px;color:var(--muted);">⚠️ 置信度标注：基于 30 条笔记，时间跨度估算基于帖子排序，非精确时间戳，仅供参考。</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+</div><!-- /.wrapper -->
+
+<!-- MODULE 10 -->
+<div class="module-inv" id="m10">
+  <div class="module-inv-inner">
+    <div class="module-num">10</div>
+    <div class="module-inner">
+      <div class="module-label">CONCLUSION / 核心结论</div>
+      <div class="module-title">可以立刻用的结论</div>
+      <div class="divider-wrap"><div class="divider-line"></div></div>
+
+      <div class="conc-group">
+        <span class="conc-clabel">✅ 3 件可以立刻复制的事</span>
+        <ul class="conc-list">
+          <li>
+            <span class="li-num">01</span>
+            <div>
+              <div>用"只有 XX，才想好好做饭"条件句标题，制造情感缺口</div>
+              <div class="bapply">操作：把触发你认真做某件事的条件写进标题，让读者完成这个条件联想。例："只有周末孩子回来，才想好好布置桌面"。这个结构可以移植到任何领域。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">02</span>
+            <div>
+              <div>用"投喂 + 细分人群"精准命名，替代"给孩子做零食"这样的泛描述</div>
+              <div class="bapply">操作：把你的目标读者身份写进标题。不说"给孩子做"，说"投喂高中住宿生"/"投喂备考党"/"投喂上夜班的老公"。细分越精准，收藏率越高，因为读者觉得"这是专门为我做的"。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">03</span>
+            <div>
+              <div>把最真实的情感放在评论区，正文保持极简</div>
+              <div class="bapply">操作：正文只写食材/动作/标签（控制在 54 字以内），把"这小子两周才回来一次"这种真实感受放在评论区第一条自评。读者会觉得这是私密分享，比正文里的情感叙述更有亲密感，评论互动率明显更高。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="conc-group">
+        <span class="conc-clabel">⚠️ 3 件要避免的坑</span>
+        <ul class="conc-list">
+          <li>
+            <span class="li-num">01</span>
+            <div>
+              <div>不要在标题/正文里使用 Emoji</div>
+              <div class="bapply">30 条笔记 Emoji 使用率 0%，这是她和其他美食博主最明显的视觉区别。Emoji 会弱化她"家常真实感"的人设，加了就是出戏。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">02</span>
+            <div>
+              <div>不要写步骤详细的教程类内容</div>
+              <div class="bapply">"教程/实操"类笔记均赞 18,000，低于整体均值 27,909。她的高赞内容全是展示结果，而不是教学过程。过度教程化会削弱食欲触发，变成"可以学的内容"而非"想吃的内容"。</div>
+            </div>
+          </li>
+          <li>
+            <span class="li-num">03</span>
+            <div>
+              <div>不要追求发布频率，牺牲内容密度</div>
+              <div class="bapply">她月更（27.3 天/条）但均赞 27,909，远超日更博主。"不粘锅"广告类内容均赞仅 6,735，是所有类型中最低的——说明内容稀释了，而不是频率问题。质量的护城河比频率更重要。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="formula-final">
+        <span class="fg-label">底层公式</span>
+        <div class="fg-body">腊月小九的底层公式 = 儿子情感钩子（触发收藏） × 真实家庭叙事（建立信任） × 挑战/复刻厨艺展示（证明实力）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+<div class="meta-foot">
+  DISTILLED BY: XHS-BLOGGER-ANALYZER &nbsp;|&nbsp; SUBJECT: 腊月小九 &nbsp;|&nbsp; SAMPLE: 30/32 NOTES &nbsp;|&nbsp; DATE: 2026-04-19<br>
+  ⚠️ 本报告基于公开数据自动分析生成，内容仅供参考，不代表博主本人立场
+</div>
+</div>
+
+<script>
+const allModules = document.querySelectorAll('.module, .module-inv');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      const divider = entry.target.querySelector('.divider-line');
+      if (divider) setTimeout(() => divider.classList.add('drawn'), 200);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+allModules.forEach(m => observer.observe(m));
+
+const counters = document.querySelectorAll('.stat-val[data-target]');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = parseFloat(el.dataset.target);
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function animate(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = (decimals === 0
+        ? Math.round(current).toLocaleString('zh-CN')
+        : current.toFixed(decimals)) + suffix;
+      if (progress < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+    counterObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+</script>
+</body>
+</html>

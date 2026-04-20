@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>夜忙症 — 博主蒸馏报告</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#CEC9C0;
+  --accent:#8A3926;
+  --text:#1A1211;
+  --muted:#7A6E65;
+  --inv-text:#FAF6F2;
+  --border:#7A6E65;
+  --border-dark:#1A1211;
+}
+html{font-size:16px;scroll-behavior:smooth}
+/* global hard constraints */
+*{border-radius:0!important;box-shadow:none!important}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Serif SC',serif;
+  font-size:16px;
+  line-height:1.6;
+}
+a{color:var(--accent);text-decoration:none}
+
+/* STATUS BAR */
+.statusbar{
+  position:sticky;top:0;z-index:100;
+  background:#0A0806;
+  color:#9A8E86;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.05em;
+  padding:7px 32px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.statusbar .blink{animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* PAGE WRAPPER */
+.page{max-width:1000px;margin:0 auto;padding:0 32px}
+
+/* MODULE */
+.module{
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:48px;
+  padding:64px 0;
+  border-bottom:1px solid var(--border-dark);
+}
+.module:last-child{border-bottom:none}
+.module-num{
+  font-family:'Space Mono',monospace;
+  font-size:80px;
+  line-height:1;
+  color:rgba(26,18,17,.08);
+  user-select:none;
+  padding-top:4px;
+}
+.module-body{}
+.module-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.module-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:16px;
+  line-height:1.3;
+}
+
+/* DIVIDER */
+.divider-wrap{margin:12px 0 24px}
+.divider-line{
+  height:1px;
+  background:var(--border-dark);
+  width:0;
+  transition:width .8s ease;
+}
+.divider-line.drawn{width:100%}
+
+/* INVERTED MODULE */
+.module-inv{
+  background:var(--accent);
+  margin:0 -32px;
+  padding:56px 32px;
+  border-bottom:none;
+}
+.module-inv .module-num{color:rgba(250,246,242,.12)}
+.module-inv .module-label{color:rgba(250,246,242,.6)}
+.module-inv .module-title{color:var(--inv-text)}
+.module-inv .module-body p,
+.module-inv .module-body li,
+.module-inv .module-body td,
+.module-inv .module-body th{color:var(--inv-text)}
+.module-inv .divider-line{background:rgba(250,246,242,.4)}
+.module-inv .tag{background:rgba(250,246,242,.12);color:var(--inv-text);border-color:rgba(250,246,242,.3)}
+.module-inv strong{color:var(--inv-text)}
+
+/* FADE-IN */
+.module{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.module.visible{opacity:1;transform:translateY(0)}
+
+/* HERO CARD (module 1) */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:8px}
+@media(max-width:768px){.hero-grid{grid-template-columns:1fr}}
+.hero-field{border-top:1px solid rgba(250,246,242,.3);padding-top:10px;margin-top:10px}
+.hero-key{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:rgba(250,246,242,.6);
+  letter-spacing:.1em;
+  margin-bottom:4px;
+}
+.hero-val{font-size:15px;color:var(--inv-text);font-weight:500}
+.hero-val.big{
+  font-family:'Space Mono',monospace;
+  font-size:28px;
+  font-weight:700;
+  color:var(--inv-text);
+  letter-spacing:-.01em;
+}
+.hero-formula{
+  margin-top:24px;
+  padding:16px 20px;
+  border-left:4px solid rgba(250,246,242,.5);
+  font-size:14px;
+  color:var(--inv-text);
+  line-height:1.7;
+}
+.hero-formula strong{color:var(--inv-text);font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.08em;display:block;margin-bottom:6px;opacity:.6}
+.hero-note{
+  margin-top:16px;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:rgba(250,246,242,.5);
+}
+
+/* PERSONA GRID */
+.persona-card{
+  border-top:1px solid var(--border);
+  padding-top:16px;
+  margin-top:16px;
+}
+.persona-tag{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.persona-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.persona-body{font-size:14px;color:var(--muted);line-height:1.65}
+
+/* IF-THEN RULE */
+.ifthen{
+  border-left:4px solid var(--accent);
+  padding:10px 16px;
+  margin:10px 0;
+  background:rgba(138,57,38,.06);
+}
+.ifthen .if-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:.08em;
+  margin-bottom:4px;
+}
+.ifthen .if-rule{font-size:15px;color:var(--text);line-height:1.5}
+.ifthen .if-ev{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--muted);
+  text-align:left;
+  border-bottom:2px solid var(--border-dark);
+  padding:8px 12px 8px 0;
+}
+td{
+  border-bottom:1px solid var(--border);
+  padding:10px 12px 10px 0;
+  vertical-align:top;
+  color:var(--text);
+  font-size:14px;
+}
+tr:last-child td{border-bottom:none}
+
+/* STAT BLOCK (module 8 counter) */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin:16px 0}
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-item{border-top:2px solid var(--border-dark);padding-top:12px}
+.stat-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:6px}
+.stat-val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--text)}
+.module-inv .stat-item{border-top-color:rgba(250,246,242,.5)}
+.module-inv .stat-label{color:rgba(250,246,242,.6)}
+.module-inv .stat-val{color:var(--inv-text)}
+
+/* TOP10 */
+.top-item{border-top:1px solid var(--border);padding:20px 0}
+.top-item:first-child{border-top:none;padding-top:0}
+.top-rank{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:rgba(26,18,17,.15);margin-bottom:4px}
+.top-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
+.top-meta{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:12px}
+.top-section{margin:10px 0}
+.top-section-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.08em;margin-bottom:4px}
+.top-section-body{font-size:14px;color:var(--text);line-height:1.65}
+.top-mini{border-top:1px solid var(--border);padding:12px 0}
+.top-mini-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px}
+.top-mini-why{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* TAGS */
+.tag{
+  display:inline-block;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  padding:3px 8px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  margin:2px 2px 2px 0;
+}
+
+/* DETAILS */
+details{margin:12px 0}
+summary{
+  font-family:'Space Mono',monospace;
+  font-size:13px;
+  color:var(--accent);
+  cursor:pointer;
+  padding:8px 0;
+  border-top:1px solid var(--border);
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+summary::before{content:'▶';font-size:10px;transition:transform .2s}
+details[open] summary::before{transform:rotate(90deg)}
+summary::-webkit-details-marker{display:none}
+.details-body{padding:16px 0 8px;border-top:1px dashed var(--border);margin-top:4px}
+
+/* FORMULA TABLE */
+.formula-table td:first-child{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  white-space:nowrap;
+}
+
+/* INSIGHT CARD */
+.insight{
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+  margin-top:12px;
+}
+.insight:first-child{border-top:none;margin-top:0}
+.insight-num{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:4px}
+.insight-body{font-size:15px;color:var(--text);line-height:1.65}
+.insight-src{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* BELIEF CARD */
+.belief{border-top:1px solid var(--border);padding:14px 0}
+.belief:first-child{border-top:none}
+.belief-text{font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px}
+.belief-src{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+.belief-verify{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-top:4px}
+
+/* TENSION */
+.tension{border-left:4px solid var(--muted);padding:12px 16px;margin:12px 0}
+.tension-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px}
+.tension-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
+@media(max-width:768px){.tension-pair{grid-template-columns:1fr}}
+.tension-side{}
+.tension-side-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:4px}
+.tension-quote{font-size:14px;color:var(--text);font-style:italic;border-left:2px solid var(--border);padding-left:10px}
+.tension-src{font-size:12px;color:var(--muted);margin-top:4px}
+.tension-analysis{font-size:14px;color:var(--text);line-height:1.65;margin-top:8px}
+
+/* SELECTION TABLE */
+.sel-table td:nth-child(4){font-size:12px;color:var(--muted)}
+
+/* CONCLUSION BLOCK */
+.conc-section{margin:16px 0}
+.conc-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);margin-bottom:8px}
+.conc-item{
+  border-top:1px solid rgba(250,246,242,.2);
+  padding:12px 0;
+  display:grid;
+  grid-template-columns:28px 1fr;
+  gap:12px;
+}
+.conc-item-num{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:rgba(250,246,242,.3)}
+.conc-item-body{font-size:15px;color:var(--inv-text);line-height:1.6}
+.conc-item-body em{font-size:12px;color:rgba(250,246,242,.6);font-style:normal;display:block;margin-top:4px}
+.bottom-formula{
+  margin-top:32px;
+  padding:20px 24px;
+  border:2px solid rgba(250,246,242,.4);
+  text-align:center;
+}
+.bottom-formula-label{font-family:'Space Mono',monospace;font-size:11px;color:rgba(250,246,242,.5);letter-spacing:.1em;margin-bottom:8px}
+.bottom-formula-text{font-size:18px;font-weight:700;color:var(--inv-text);line-height:1.5}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .module{grid-template-columns:1fr;gap:16px;padding:40px 0}
+  .module-num{font-size:48px}
+  .page{padding:0 20px}
+  .module-inv{margin:0 -20px;padding:40px 20px}
+  .hero-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  .module{opacity:1;transform:none;transition:none}
+  .divider-line{width:100%;transition:none}
+  .stat-val{transition:none}
+  .statusbar .blink{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  SUBJECT: 夜忙症 &nbsp;|&nbsp; NOTES_ANALYZED: 20/40+ &nbsp;|&nbsp; GENERATED: 2026-04-19 &nbsp;|&nbsp; STATUS: <span class="blink">DISTILLED</span>
+</div>
+
+<div class="page">
+
+<!-- ═══════════════════════════════════ MODULE 1 ═══════════════════════ -->
+<section class="module module-inv" id="m1">
+  <div class="module-num">01</div>
+  <div class="module-body">
+    <div class="module-label">SUBJECT OVERVIEW</div>
+    <div class="module-title">一眼看清</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="hero-grid">
+      <div>
+        <div class="hero-field">
+          <div class="hero-key">NICKNAME</div>
+          <div class="hero-val big">夜忙症</div>
+        </div>
+        <div class="hero-field">
+          <div class="hero-key">FOLLOWERS</div>
+          <div class="hero-val big">90.5万</div>
+        </div>
+      </div>
+      <div>
+        <div class="hero-field">
+          <div class="hero-key">TOTAL LIKES + FAVS</div>
+          <div class="hero-val big">357万</div>
+        </div>
+        <div class="hero-field">
+          <div class="hero-key">POSITIONING</div>
+          <div class="hero-val">珠宝知识 × 女性成长的温柔先行者</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-formula">
+      <strong>CORE FORMULA</strong>
+      专业珠宝知识门槛 × 真实生活经历叙事 × 女性独立价值立场
+    </div>
+
+    <div class="hero-formula" style="margin-top:12px">
+      <strong>BIO</strong>
+      精致主义实用派｜敏感痘肌困扰者｜克制热爱｜利落随性｜简单有趣｜高跟鞋控
+    </div>
+
+    <div class="hero-note">
+      ⚠ 基于 20 条笔记蒸馏（含完整正文）&nbsp;|&nbsp; 采样范围: 20/40+ 条 &nbsp;|&nbsp; 生成时间: 2026-04-19
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 2 ═══════════════════════ -->
+<section class="module" id="m2">
+  <div class="module-num">02</div>
+  <div class="module-body">
+    <div class="module-label">IDENTITY ANALYSIS</div>
+    <div class="module-title">人设拆解</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px">粉丝把 TA 当作先行者——TA 替他们试过了婚姻、高端珠宝、欧洲蜜月，他们只需要跟。</p>
+
+    <div class="persona-card">
+      <div class="persona-tag">PILLAR 01 / JEWELRY EXPERT</div>
+      <div class="persona-title">珠宝知识达人</div>
+      <div class="persona-body">不只是推荐，而是真正懂行。「传世珠宝不止红蓝宝和祖母绿，珍珠也值天价」（1985赞）告诉读者她有独立判断力，而非 KOC 带货逻辑。#珠宝 #珠宝首饰 #高级珠宝 在 TOP20 标签中占 3 席。</div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-tag">PILLAR 02 / LIFE PIONEER</div>
+      <div class="persona-title">经历先行者</div>
+      <div class="persona-body">她把结婚、蜜月、欧洲旅行全部变成内容——不是完美人生展示，而是「婚前第三天就有摩擦」「欧洲旅行让我对世界祛魅」。真实性带来「婚前坦白局」316 条评论，远超其他内容。</div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-tag">PILLAR 03 / SOFT OPINIONMAKER</div>
+      <div class="persona-title">温柔直言派</div>
+      <div class="persona-body">有观点但不攻击。彩礼、婚姻、女性独立都敢谈，但以「我觉得」「我们的方式」等第一人称经历切入，不道德说教。TOP9「谈钱伤感情？」664赞，评论区两极分化说明话题真实有分量。</div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="module-label" style="margin-bottom:12px">MOAT ANALYSIS</div>
+      <div class="ifthen">
+        <div class="if-rule">TA 的护城河不是技巧，而是<strong>「已经活过一遍的真实经历」</strong>。婚前坦白局（1965赞，316评论）展示的真实争执，是任何人无法复制的内容资产。搭配珠宝知识的专业壁垒（均赞848），形成「有品味、有阅历、有观点」的三层护城河。与之对比，TOP4 分析奶茶妹 1288 赞，但评论区以「晃死了」居多，说明评论他人内容抗风险能力弱，而原创经历内容几乎不会翻车。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 3 ═══════════════════════ -->
+<section class="module" id="m3">
+  <div class="module-num">03</div>
+  <div class="module-body">
+    <div class="module-label">COGNITIVE LAYER</div>
+    <div class="module-title">认知层 — TA 怎么想</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+    <p style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:20px">⚠ 基于 20 条笔记提取，样本有限仅供参考</p>
+
+    <div class="module-label" style="margin-bottom:12px">CORE BELIEFS × 5</div>
+
+    <div class="belief">
+      <div class="belief-text">1. "长期主义视角看待消费选择——宁花精力选一件好的，不买一堆将来不穿的"</div>
+      <div class="belief-src">📍 出处：《建立长期主义衣橱》(2202赞) 《传世珠宝不止红蓝宝》(1985赞) 《高段位送礼》(646赞)</div>
+      <div class="belief-verify">✅ 跨 3 个不同主题（衣橱/珠宝/送礼）复现，是真实信念而非单一选题</div>
+    </div>
+    <div class="belief">
+      <div class="belief-text">2. "真实摩擦是健康感情的一部分，展示完美是种谎言"</div>
+      <div class="belief-src">📍 出处：《婚前坦白局》(1965赞) 《欧洲旅行反而对世界祛魅了》(334赞) 《女生容易发火的真相》(445赞)</div>
+      <div class="belief-verify">✅ 跨 3 个不同主题（婚姻/旅行/情绪管理）复现</div>
+    </div>
+    <div class="belief">
+      <div class="belief-text">3. "见识世界让你对宏观规律祛魅，同时对具体的爱与人加魅"</div>
+      <div class="belief-src">📍 出处：《欧洲旅行反而对世界祛魅了》(334赞) — 原文：「越是见识到不同文明的样貌，越是一方面对世界祛魅，一方面对爱的事情加魅」</div>
+      <div class="belief-verify">✅ 核心观点，原文引用，不可能出自其他博主</div>
+    </div>
+    <div class="belief">
+      <div class="belief-text">4. "女性应该尽早建立财务意识和开挂思维，而不是等待被保护"</div>
+      <div class="belief-src">📍 出处：《人生建议：女生应该尽早培养自己的开挂思维》(1174赞) 《奶茶妹做播客的背后》(1288赞) 《谈钱伤感情？男人为啥对彩礼这么敏感？》(664赞)</div>
+      <div class="belief-verify">✅ 跨女性成长系列多篇复现</div>
+    </div>
+    <div class="belief">
+      <div class="belief-text">5. "专业知识是建立信任的底层，不是门槛用于炫耀的工具"</div>
+      <div class="belief-src">📍 出处：《审美暴击！是了不起的中国珍珠！》(898赞) 《传世珠宝》(1985赞) 《鉴宝vlog》(350赞)</div>
+      <div class="belief-verify">✅ 珠宝知识系列 6 条，知识科普而非商品推荐逻辑贯穿始终</div>
+    </div>
+
+    <div style="margin-top:28px">
+      <details>
+        <summary>查看全部原文观点摘录（3条）→</summary>
+        <div class="details-body">
+          <div class="insight">
+            <div class="insight-num">OQ — 01</div>
+            <div class="insight-body">「很多姐妹都说羡慕我和vic在感情和情绪方面的稳定👫，其实我们第三天就已经开始有小小的争执了，虽然这些摩擦并不会对我们的感情有实际的影响，但是这才是生活中最真实的一面」</div>
+            <div class="insight-src">— 来源：《欧洲旅行半个月🌍反而对这个世界祛魅了》(334赞)</div>
+          </div>
+          <div class="insight">
+            <div class="insight-num">OQ — 02</div>
+            <div class="insight-body">「越是见识到不同文明的样貌，越是一方面对世界祛魅，一方面对爱的事情加魅，我觉得这可能才是一个更真实更有意义的方向吧」</div>
+            <div class="insight-src">— 来源：《欧洲旅行半个月🌍反而对这个世界祛魅了》(334赞)</div>
+          </div>
+          <div class="insight">
+            <div class="insight-num">OQ — 03</div>
+            <div class="insight-body">「很荣幸被官方邀请拍摄了TVC」（语境：2019-2025年六年积累结果）</div>
+            <div class="insight-src">— 来源：《🕑2019-2025｜拍这条视频，我用了6年！》(458赞)</div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="module-label" style="margin-bottom:12px">COGNITIVE FRAMEWORK</div>
+      <div class="ifthen">
+        <div class="if-label">FRAMEWORK 01 — LONG-TERM VALUE LENS</div>
+        <div class="if-rule">TA 解读消费、选择、感情时，始终用「5年后还有没有价值」的视角过滤。这不是节俭主义，而是反冲动的审美主义——《长期主义衣橱》（2202赞，藏赞比81.8%）是博主基调，同样逻辑出现在珠宝选择和送礼策略中。</div>
+      </div>
+      <div class="ifthen">
+        <div class="if-label">FRAMEWORK 02 — REAL OVER PERFECT</div>
+        <div class="if-rule">面对「展示完美生活」的平台压力，TA 反向押注真实性。婚前第三天的摩擦、欧洲旅行的祛魅感、主动回复湛江视频的地图错误——每次都选真实而非体面。《婚前坦白局》316条评论（是均评77的4.1倍）验证了这个框架有效。</div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="module-label" style="margin-bottom:12px">COGNITIVE TENSION</div>
+      <div class="tension">
+        <div class="tension-label">张力 1：「祛魅与加魅」的共存</div>
+        <div class="tension-pair">
+          <div class="tension-side">
+            <div class="tension-side-label">观点 A — 对世界祛魅</div>
+            <div class="tension-quote">「越是见识到不同文明的样貌，越是对世界祛魅」</div>
+            <div class="tension-src">《欧洲旅行半个月》(334赞)</div>
+          </div>
+          <div class="tension-side">
+            <div class="tension-side-label">观点 B — 对爱执着加魅</div>
+            <div class="tension-quote">「一方面对爱的事情加魅，这可能才是更真实更有意义的方向」</div>
+            <div class="tension-src">同一篇笔记</div>
+          </div>
+        </div>
+        <div class="tension-analysis">如何理解：这不是矛盾，而是成熟世界观的标志——她用理性消化宏观（文明、规律），用感性投入微观（感情、美物）。这个张力是她区别于纯理性或纯感性创作者的关键。</div>
+      </div>
+
+      <div class="tension">
+        <div class="tension-label">张力 2：「独立女性」与「婚姻叙事」并行</div>
+        <div class="tension-pair">
+          <div class="tension-side">
+            <div class="tension-side-label">观点 A — 独立意识</div>
+            <div class="tension-quote">「女生应该尽早培养自己的开挂思维」</div>
+            <div class="tension-src">《开挂思维》(1174赞)</div>
+          </div>
+          <div class="tension-side">
+            <div class="tension-side-label">观点 B — 婚姻记录</div>
+            <div class="tension-quote">婚礼倒计时、婚前坦白局、蜜月vlog…大量婚姻相关内容</div>
+            <div class="tension-src">TOP3, TOP9 等</div>
+          </div>
+        </div>
+        <div class="tension-analysis">如何理解：TA 的「独立」不是反婚，而是「主动选择进入婚姻的独立女性」视角。这个张力实际上扩大了受众——既吸引独立女性，也吸引已婚/备婚人群。</div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="module-label" style="margin-bottom:12px">VALUE VOCABULARY</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:12px">从高频词中过滤通用词后，保留有立场含义的核心词：</p>
+      <div>
+        <span class="tag">珠宝首饰</span>
+        <span class="tag">女性成长</span>
+        <span class="tag">高级珠宝</span>
+        <span class="tag">可持续衣橱</span>
+        <span class="tag">长期主义</span>
+        <span class="tag">珠宝知识</span>
+        <span class="tag">欢迎来到中女时代</span>
+        <span class="tag">强女思维</span>
+      </div>
+      <div class="ifthen" style="margin-top:16px">
+        <div class="if-rule">夜忙症的内容底色是：<strong>「有品位的真实主义者」</strong>——她懂美，但拒绝被「展示完美」绑架；她有观点，但拒绝说教；她倡导独立，但不拒绝爱情和婚姻。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 4 ═══════════════════════ -->
+<section class="module" id="m4">
+  <div class="module-num">04</div>
+  <div class="module-body">
+    <div class="module-label">STRATEGY LAYER</div>
+    <div class="module-title">策略层 — TA 怎么运营</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="module-label" style="margin-bottom:12px">CONTENT SERIES</div>
+    <table>
+      <thead><tr><th>系列</th><th>条数</th><th>均赞</th><th>发布节奏</th><th>趋势</th></tr></thead>
+      <tbody>
+        <tr><td>珠宝知识科普</td><td>6条</td><td>848</td><td>不定期，约每 2 月 1-2 条</td><td>➡ 稳定</td></tr>
+        <tr><td>女性成长观点</td><td>4条</td><td>1,068</td><td>近期加速，前5条仅1条，后5条3条</td><td>📈 增长</td></tr>
+        <tr><td>旅行/生活记录</td><td>4条</td><td>428</td><td>前期集中，近期几乎停止</td><td>📉 收缩</td></tr>
+        <tr><td>婚姻/感情叙事</td><td>3条</td><td>1,198</td><td>集中在婚前婚后阶段</td><td>✦ 阶段性</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:24px">
+      <div class="module-label" style="margin-bottom:12px">TRENDING STRATEGY</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:12px">
+        蹭热点占比约 15%（3/20条），以<strong>人物解读型</strong>为主而非事件型。《奶茶妹做播客的背后》（1288赞）和《女生容易发火的真相》（445赞）借助话题流量，但嫁接了TA自己的观点，不是纯跟风。热点内容均赞（~866）与常规内容（~840）差距不大，说明TA的基础盘稳固，热点只是锦上添花。
+      </p>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="module-label" style="margin-bottom:12px">OPERATING RULES × 4</div>
+      <div class="ifthen">
+        <div class="if-label">RULE 01</div>
+        <div class="if-rule">If 内容出现事实错误 → 立即在评论区置顶道歉+修正，不删帖</div>
+        <div class="if-ev">证据：《预制旅游攻略｜听我说 错过湛江真的会后悔》(690赞)，评论区多人指出图片信息有误（江门赤坎古镇 ≠ 湛江赤坎区），作者回复：「谢谢大家提醒 视频里错误的图片信息贴错了！现在已经修改好了！」</div>
+      </div>
+      <div class="ifthen">
+        <div class="if-label">RULE 02</div>
+        <div class="if-rule">If 话题有争议 → 不回避争议，在正文设置中立立场并引导讨论</div>
+        <div class="if-ev">证据：《婚前坦白局》316条评论（评论区"吃软饭"争议激烈），《谈钱伤感情？》彩礼话题，TA均未删评或回避，而是让讨论自然发生。</div>
+      </div>
+      <div class="ifthen">
+        <div class="if-label">RULE 03</div>
+        <div class="if-rule">If 发布标签 → 必带品牌标签 #夜忙症（5/20条，25%），固定领域标签+1-2个热点话题标签</div>
+        <div class="if-ev">证据：TOP20标签中 #夜忙症 出现5次，出现在婚姻/女性成长/珠宝多个领域，是品牌沉淀工具。</div>
+      </div>
+      <div class="ifthen">
+        <div class="if-label">RULE 04</div>
+        <div class="if-rule">If 发布频率 → 低频精品策略，约每 36 天发一篇</div>
+        <div class="if-ev">证据：发布频率数据 36.4天/条。低频意味着每条内容都需要有足够信息密度，印证了「长期主义」的内容哲学。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 5 ═══════════════════════ -->
+<section class="module" id="m5">
+  <div class="module-num">05</div>
+  <div class="module-body">
+    <div class="module-label">TOP CONTENT ANALYSIS</div>
+    <div class="module-title">TOP10 爆款拆解</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <!-- TOP 1-5 深度拆解 -->
+    <div class="top-item">
+      <div class="top-rank">#01</div>
+      <div class="top-title">建立长期主义衣橱！让你的衣服物尽其用！</div>
+      <div class="top-meta">赞 2,202 &nbsp;|&nbsp; 藏 1,802 &nbsp;|&nbsp; 评 43 &nbsp;|&nbsp; 藏赞比 81.8%（全场最高）</div>
+      <div class="top-section">
+        <div class="top-section-label">为什么爆</div>
+        <div class="top-section-body">这条之所以爆，核心原因是「藏赞比81.8%」——读者把它当工具收藏而非单纯点赞，说明信息密度极高、实用价值极强。「长期主义衣橱」这个概念直击「买了很多衣服但不会穿」的普遍痛点，而不是「买好衣服」的通用建议。评论区「买一件高品质的比乱七八糟买一堆利用率高多了」印证读者共鸣所在。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">可借鉴点</div>
+        <div class="top-section-body">你可以用同样的结构：先给出反常识结论（不是买更多，而是建立体系），再用具体实物展示原则如何落地，最后用「让你的衣服物尽其用」锚定读者的行动欲望。关键是「收藏型选题」——提供的是工具而不是故事。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">评论区洞察</div>
+        <div class="top-section-body">最高关注评论：「主要是。。。我喜欢买，但是懒得搭（不会）」→ 说明读者的真实痛点不是「买了不好看」，而是「买了不会搭」。下一条选题机会：衣服搭配技巧 > 衣柜整理。</div>
+      </div>
+      <details>
+        <summary>查看正文摘要 →</summary>
+        <div class="details-body" style="font-size:13px;color:var(--muted)">标签：#女性穿衣打扮 #提升衣品 #女人的衣柜 #穿搭 #每日分享 #珠宝首饰 #可持续衣橱 #衣柜设计灵感</div>
+      </details>
+    </div>
+
+    <div class="top-item">
+      <div class="top-rank">#02</div>
+      <div class="top-title">传世珠宝不止红蓝宝和祖母绿，珍珠也值天价</div>
+      <div class="top-meta">赞 1,985 &nbsp;|&nbsp; 藏 527 &nbsp;|&nbsp; 评 37 &nbsp;|&nbsp; 藏赞比 26.5%</div>
+      <div class="top-section">
+        <div class="top-section-label">为什么爆</div>
+        <div class="top-section-body">「信息差」型内容天然有传播力。大多数人以为传世珠宝 = 红蓝宝石，这条用「珍珠也值天价」颠覆认知，读者看完会想分享给身边人（「你知道吗珍珠也可以是传世珠宝」）。评论区「长见识了，好！」印证是认知颠覆型内容。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">可借鉴点</div>
+        <div class="top-section-body">标题公式：「[大多数人以为的]不止[常见认知]，[被低估的选项]也[意外结论]」。内容结构：先肯定常规认知 → 再拓展边界 → 最后给具体证据（天价珍珠的历史/价值）。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">评论区洞察</div>
+        <div class="top-section-body">「珍珠放久了真的会发黄吗？」「博主戴的是什么珍珠」→ 读者被激发了实际购买意图，知识型内容在这里成功转化为消费决策辅助。</div>
+      </div>
+    </div>
+
+    <div class="top-item">
+      <div class="top-rank">#03</div>
+      <div class="top-title">婚姻关系中最重要的到底是什么❓婚前坦白局</div>
+      <div class="top-meta">赞 1,965 &nbsp;|&nbsp; 藏 742 &nbsp;|&nbsp; 评 316 &nbsp;|&nbsp; 藏赞比 37.8%（<strong style="color:var(--accent)">评论量是均值4.1倍</strong>）</div>
+      <div class="top-section">
+        <div class="top-section-label">为什么爆</div>
+        <div class="top-section-body">这条之所以爆，核心原因是「话题触发了读者自己想说的话」。婚前坦白局里vic关于买房的态度引发「吃软饭」争议，评论区两极分化——但这正是小红书算法喜欢的：高互动 = 高推流。真实的婚前采访内容制造了窥探真实感情生活的「偷听感」。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">可借鉴点</div>
+        <div class="top-section-body">对话/采访型内容比独白型内容互动率高——316评论 vs 均评77。设置「可被讨论的争议点」（不是刻意引战，而是真实存在的价值观差异），能放大评论量。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">评论区洞察</div>
+        <div class="top-section-body">高赞评论：「感觉明显是吃软饭，不合适不合适」vs「去看看李巍是干啥的再来说人家吃软饭，人家上了福布斯的」→ 信息差引发的讨论最有粘性，而不是单纯的情感共鸣。</div>
+      </div>
+    </div>
+
+    <div class="top-item">
+      <div class="top-rank">#04</div>
+      <div class="top-title">奶茶妹做播客的背后，隐藏着所有普通人破局</div>
+      <div class="top-meta">赞 1,288 &nbsp;|&nbsp; 藏 676 &nbsp;|&nbsp; 评 160</div>
+      <div class="top-section">
+        <div class="top-section-label">为什么爆</div>
+        <div class="top-section-body">蹭名人热点 + 普通人视角切入的结合。「普通人破局」是比「章泽天创业」更有共鸣的角度——把明星案例转化为方法论提取，读者学的是策略而不是膜拜。但这条评论区「晃死了」「镜头晃的我头晕」显示制作质量是硬伤。</div>
+      </div>
+      <div class="top-section">
+        <div class="top-section-label">评论区洞察</div>
+        <div class="top-section-body">最高赞评论聚焦镜头晃动问题，说明这条内容的阅读体验拖累了潜在更高的互动数据。制作质量值得投入。</div>
+      </div>
+    </div>
+
+    <div class="top-item">
+      <div class="top-rank">#05</div>
+      <div class="top-title">人生建议：女生应该尽早培养自己的开挂思维</div>
+      <div class="top-meta">赞 1,174 &nbsp;|&nbsp; 藏 975 &nbsp;|&nbsp; 评 24 &nbsp;|&nbsp; 藏赞比 83.1%（<strong style="color:var(--accent)">第二高</strong>）</div>
+      <div class="top-section">
+        <div class="top-section-label">为什么爆</div>
+        <div class="top-section-body">藏赞比83.1%是全场第二高，这是典型的「工具型干货内容」。读者收藏的是「开挂思维」这个方法论，而不是故事。标签 #大女主心态 #强女思维 精准触达有上进心的女性群体。</div>
+      </div>
+    </div>
+
+    <!-- TOP 6-10 快速拆解 -->
+    <details style="margin-top:12px">
+      <summary>TOP 6–10 快速拆解 →</summary>
+      <div class="details-body">
+        <div class="top-mini"><div class="top-mini-title">#06 春节影单🪫4部高分充能电影给你勇气和力量 | 赞940 藏1136</div><div class="top-mini-why">藏赞比120.9%（史上最高），说明「工具型清单」内容的收藏属性极强。女性向电影清单是零门槛收藏内容。</div></div>
+        <div class="top-mini"><div class="top-mini-title">#07 审美暴击！是了不起的中国珍珠！ | 赞898 藏423</div><div class="top-mini-why">感叹型标题+文化自豪感触发，老祖宗审美切入点有稳定流量。</div></div>
+        <div class="top-mini"><div class="top-mini-title">#08 预制旅游攻略｜听我说 错过湛江真的会后悔 | 赞690 藏602</div><div class="top-mini-why">攻略型内容藏赞比87.2%，但因图片错误引发311字长评投诉——内容准确性是攻略类硬要求。</div></div>
+        <div class="top-mini"><div class="top-mini-title">#09 谈钱伤感情？男人为啥对彩礼这么敏感？ | 赞664 藏324</div><div class="top-mini-why">话题性强但赞数低于女性成长系列均值，说明「社会议题」没有「个人方法论」来得有转化效率。</div></div>
+        <div class="top-mini"><div class="top-mini-title">#10 高段位送礼！送礼送的绝不止人情世故！ | 赞646 藏542</div><div class="top-mini-why">珠宝+职场结合的跨界选题，藏赞比83.9%，说明「实用决策工具」内容有强收藏属性。</div></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 6 ═══════════════════════ -->
+<section class="module" id="m6">
+  <div class="module-num">06</div>
+  <div class="module-body">
+    <div class="module-label">CONTENT FORMULA</div>
+    <div class="module-title">内容公式速查</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="module-label" style="margin-bottom:12px">TITLE PATTERNS × 5</div>
+    <table class="formula-table">
+      <thead><tr><th>#</th><th>公式名</th><th>使用率</th><th>模板</th><th>原标题示例</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>感叹型</td><td>40.0%</td><td>[具体行动]！[具体效果]！</td><td>建立长期主义衣橱！让你的衣服物尽其用！</td></tr>
+        <tr><td>02</td><td>故事型</td><td>20.0%</td><td>[系列/形式]｜[具体建议或反转]</td><td>预制旅游攻略｜听我说 错过湛江真的会后悔</td></tr>
+        <tr><td>03</td><td>疑问型</td><td>15.0%</td><td>[话题]到底是什么/为什么❓[副标题]</td><td>婚姻关系中最重要的到底是什么❓婚前坦白局</td></tr>
+        <tr><td>04</td><td>数字型</td><td>10.0%</td><td>[emoji][N][类型][情绪词]</td><td>春节影单🪫4部高分充能电影给你勇气和力量</td></tr>
+        <tr><td>05</td><td>教程型</td><td>5.0%</td><td>[行动/知识类型]｜[具体主题]</td><td>预制旅游攻略｜听我说 错过湛江真的会后悔</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:24px">
+      <div class="module-label" style="margin-bottom:12px">CTA STRATEGY</div>
+      <table>
+        <thead><tr><th>CTA 类型</th><th>使用率</th><th>典型用法</th></tr></thead>
+        <tbody>
+          <tr><td>转发引导</td><td>10.0%</td><td>「转给需要的人」类，用于高价值工具型内容</td></tr>
+          <tr><td>评论引导</td><td>5.0%</td><td>「你怎么看」开放式提问，用于观点类内容</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">注：85% 的笔记无明显CTA，内容本身的收藏欲驱动互动，而非强引导。</p>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="module-label" style="margin-bottom:12px">TAG STRATEGY</div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:10px"><strong>固定品牌标签（每篇必带）：</strong></p>
+      <span class="tag">#夜忙症</span><span class="tag">#珠宝</span><span class="tag">#珠宝首饰</span><span class="tag">#女性成长</span>
+      <p style="font-size:14px;color:var(--text);margin:14px 0 8px"><strong>领域标签（按内容选2-4个）：</strong></p>
+      <span class="tag">#高级珠宝</span><span class="tag">#珠宝知识</span><span class="tag">#欢迎来到中女时代</span><span class="tag">#旅行</span><span class="tag">#欧洲旅行</span><span class="tag">#婚姻</span>
+    </div>
+
+    <p style="margin-top:20px;font-size:13px;color:var(--muted)">→ 完整公式详见蒸馏 Skill 文件：<code style="font-size:12px;background:rgba(26,18,17,.06);padding:2px 6px">夜忙症_创作指南.skill/SKILL.md</code></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 7 ═══════════════════════ -->
+<section class="module" id="m7">
+  <div class="module-num">07</div>
+  <div class="module-body">
+    <div class="module-label">TOPIC INSPIRATION</div>
+    <div class="module-title">选题灵感 TOP15</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">排序逻辑：预估潜力 × (1/难度)。预估均赞基于同方向现有内容对比博主整体均赞851。</p>
+    <table class="sel-table">
+      <thead><tr><th>#</th><th>选题方向</th><th>难度</th><th>预估潜力</th><th>参考爆款</th><th>为什么值得做</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>珠宝传世价值系列2.0：把哪些珠宝当遗产传给女儿</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《传世珠宝》(1985赞)</td><td>场景更具体，情感投入更强，收藏属性高</td></tr>
+        <tr><td>02</td><td>婚后第一年：真实财务分工是怎么谈的</td><td>⭐</td><td>🔥🔥🔥</td><td>《婚前坦白局》(1965赞)</td><td>婚前坦白局的续集，高互动基因+评论区自然产生讨论</td></tr>
+        <tr><td>03</td><td>可持续衣橱系列：如何用5件单品走遍全球</td><td>⭐⭐</td><td>🔥🔥🔥</td><td>《长期主义衣橱》(2202赞)</td><td>最高赞内容的延伸，藏赞比>80%说明有系列化潜力</td></tr>
+        <tr><td>04</td><td>女性破局案例分析：她用什么思维在XX行业逆袭</td><td>⭐⭐</td><td>🔥🔥</td><td>《奶茶妹做播客》(1288赞)</td><td>女性成长系列均赞超整体均值25%，方向验证</td></tr>
+        <tr><td>05</td><td>高端礼物完全手册：不同预算的珠宝选择逻辑</td><td>⭐⭐</td><td>🔥🔥</td><td>《高段位送礼》(646赞)</td><td>藏赞比83.9%，实用工具型内容，扩展预算层次可复制</td></tr>
+        <tr><td>06</td><td>女生「开挂思维」的3个底层习惯</td><td>⭐</td><td>🔥🔥🔥</td><td>《开挂思维》(1174赞)</td><td>藏赞比83.1%，工具型内容，直接给方法步骤可放大</td></tr>
+        <tr><td>07</td><td>老祖宗传下来的中国美学珠宝2.0：首饰演变史</td><td>⭐⭐⭐</td><td>🔥🔥</td><td>《审美暴击！中国珍珠》(898赞)</td><td>文化自信叙事+珠宝专业度，差异化竞争壁垒</td></tr>
+        <tr><td>08</td><td>女性情绪管理：为什么「容易发火」是合理的</td><td>⭐</td><td>🔥🔥</td><td>《女生容易发火的真相》(445赞)</td><td>情绪话题普遍性高，挑战「情绪稳定即美德」叙事</td></tr>
+        <tr><td>09</td><td>购买培育钻或天然钻：真实决策清单</td><td>⭐⭐</td><td>🔥🔥</td><td>《想买培育钻快来》内容受限</td><td>高客单价决策辅助型内容，收藏属性强</td></tr>
+        <tr><td>10</td><td>「祛魅式旅行」：旅行不是治愈一切的药</td><td>⭐⭐</td><td>🔥</td><td>《欧洲旅行对世界祛魅》(334赞)</td><td>反共识视角，TA亲身经历是最强说服力</td></tr>
+        <tr><td>11</td><td>蜜月旅行真实清单：花了多少钱，值不值</td><td>⭐</td><td>🔥🔥</td><td>《蜜月碎碎念》(488赞)</td><td>婚姻系列延伸，财务透明叙事高共鸣</td></tr>
+        <tr><td>12</td><td>溯源系列：一件中国非遗背后的故事</td><td>⭐⭐⭐</td><td>🔥</td><td>《溯源vlog蜀锦》(541赞)</td><td>差异化内容，抖音已验证非遗内容有增量流量</td></tr>
+        <tr><td>13</td><td>女性投资入门：从珠宝到更宽的资产观</td><td>⭐⭐⭐</td><td>🔥🔥</td><td>跨多篇</td><td>珠宝知识 + 女性成长两大主线的交汇点</td></tr>
+        <tr><td>14</td><td>「克制热爱」：选购哲学与反消费主义</td><td>⭐⭐</td><td>🔥🔥</td><td>简介关键词「克制热爱」</td><td>品牌人设核心词，系统化成内容可强化护城河</td></tr>
+        <tr><td>15</td><td>博主身份6年复盘：2019-2025我做对了什么</td><td>⭐</td><td>🔥🔥🔥</td><td>《拍这条视频我用了6年》(458赞)</td><td>情感共鸣 + 方法论提取，长期粉丝高黏性内容</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 8 ═══════════════════════ -->
+<section class="module module-inv" id="m8">
+  <div class="module-num">08</div>
+  <div class="module-body">
+    <div class="module-label">DATA PANEL</div>
+    <div class="module-title">数据面板</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">AVG LIKES</div>
+        <div class="stat-val" data-target="851" data-decimals="0">851</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">AVG FAVS</div>
+        <div class="stat-val" data-target="461" data-decimals="0">461</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">AVG COMMENTS</div>
+        <div class="stat-val" data-target="77" data-decimals="0">77</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">FAV/LIKE RATIO</div>
+        <div class="stat-val" data-target="54.2" data-decimals="1">54.2%</div>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-top:8px">
+      <div class="stat-item">
+        <div class="stat-label">TOTAL LIKES</div>
+        <div class="stat-val" data-target="17031" data-decimals="0">17,031</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">TOTAL FAVS</div>
+        <div class="stat-val" data-target="9234" data-decimals="0">9,234</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">VIDEO RATIO</div>
+        <div class="stat-val">18/20</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">VIRAL RATE(×3)</div>
+        <div class="stat-val">0.0%</div>
+      </div>
+    </div>
+
+    <details style="margin-top:24px">
+      <summary style="color:rgba(250,246,242,.7);border-top-color:rgba(250,246,242,.3)">查看详细数据 →</summary>
+      <div class="details-body">
+        <table>
+          <thead><tr><th style="color:rgba(250,246,242,.5)">指标</th><th style="color:rgba(250,246,242,.5)">数值</th><th style="color:rgba(250,246,242,.5)">说明</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--inv-text)">发布频率</td><td style="color:var(--inv-text)">约 36 天/条</td><td style="color:rgba(250,246,242,.6)">低频精品策略</td></tr>
+            <tr><td style="color:var(--inv-text)">平均正文长度</td><td style="color:var(--inv-text)">177 字</td><td style="color:rgba(250,246,242,.6)">视频说话，文字为辅</td></tr>
+            <tr><td style="color:var(--inv-text)">列表使用率</td><td style="color:var(--inv-text)">5.0%</td><td style="color:rgba(250,246,242,.6)">偏好叙述式而非要点式</td></tr>
+            <tr><td style="color:var(--inv-text)">小标题使用率</td><td style="color:var(--inv-text)">0.0%</td><td style="color:rgba(250,246,242,.6)">图文分层由视频画面承担</td></tr>
+            <tr><td style="color:var(--inv-text)">Emoji 使用率</td><td style="color:var(--inv-text)">15.0%（3/20条）</td><td style="color:rgba(250,246,242,.6)">克制使用，主要在旅行内容</td></tr>
+            <tr><td style="color:var(--inv-text)">高频 Emoji</td><td style="color:var(--inv-text)">✈ 📍 🌅 🍂 🛬</td><td style="color:rgba(250,246,242,.6)">旅行向 emoji 为主</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px">
+          <p style="font-family:'Space Mono',monospace;font-size:11px;color:rgba(250,246,242,.5);margin-bottom:8px">TOP TAGS × 20</p>
+          <span class="tag">#珠宝×6</span><span class="tag">#珠宝首饰×5</span><span class="tag">#夜忙症×5</span><span class="tag">#女性成长×5</span><span class="tag">#旅行×3</span><span class="tag">#欧洲旅行×3</span><span class="tag">#珠宝知识×2</span><span class="tag">#珍珠×2</span><span class="tag">#高级珠宝×2</span><span class="tag">#结婚×2</span><span class="tag">#婚姻×2</span><span class="tag">#欢迎来到中女时代×2</span>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 9 ═══════════════════════ -->
+<section class="module" id="m9">
+  <div class="module-num">09</div>
+  <div class="module-body">
+    <div class="module-label">TREND ANALYSIS</div>
+    <div class="module-title">发展趋势</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <details open>
+      <summary>📈 发展趋势分析（基于 20 条笔记，前10 vs 后10，仅供参考）→</summary>
+      <div class="details-body">
+        <table>
+          <thead><tr><th>内容领域</th><th>早期(前10条)</th><th>近期(后10条)</th><th>变化</th></tr></thead>
+          <tbody>
+            <tr><td>旅行</td><td>30.0%</td><td>0.0%</td><td style="color:var(--accent)">📉 -30%</td></tr>
+            <tr><td>夜忙症品牌叙事</td><td>20.0%</td><td>0.0%</td><td style="color:var(--accent)">📉 -20%</td></tr>
+            <tr><td>女性成长</td><td>10.0%</td><td>30.0%</td><td style="color:#3A7A3A">📈 +20%</td></tr>
+            <tr><td>珠宝首饰</td><td>0.0%</td><td>20.0%</td><td style="color:#3A7A3A">📈 +20%</td></tr>
+            <tr><td>日常/Vlog</td><td>0.0%</td><td>10.0%</td><td style="color:#3A7A3A">📈 +10%</td></tr>
+            <tr><td>珠宝</td><td>30.0%</td><td>30.0%</td><td>➡ 不变</td></tr>
+            <tr><td>教程/实操</td><td>0.0%</td><td>10.0%</td><td style="color:#3A7A3A">📈 +10%</td></tr>
+            <tr><td>测评/推荐</td><td>10.0%</td><td>0.0%</td><td style="color:var(--accent)">📉 -10%</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ifthen" style="margin-top:16px">
+          <div class="if-label">TREND INTERPRETATION</div>
+          <div class="if-rule">转型信号明确：旅行/生活记录内容大幅收缩（-30%），女性成长议题快速扩张（+20%）。这与粉丝量级增长（90万）相符——更大的受众需要更普世的价值观内容，而旅行/婚礼这类阶段性内容随着生活阶段进入新轨道而自然减少。珠宝内容保持30%的稳定性，说明这是TA的「锚点内容」，不会轻易放弃。</div>
+          <div class="if-ev">⚠ 置信度：中等。样本仅20条，时间跨度未精确计算，仅供方向性参考。</div>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MODULE 10 ═══════════════════════ -->
+<section class="module module-inv" id="m10">
+  <div class="module-num">10</div>
+  <div class="module-body">
+    <div class="module-label">CORE CONCLUSIONS</div>
+    <div class="module-title">核心结论</div>
+    <div class="divider-wrap"><div class="divider-line"></div></div>
+
+    <div class="conc-section">
+      <div class="conc-label">✅ 3 件可以立刻复制的事</div>
+      <div class="conc-item">
+        <div class="conc-item-num">01</div>
+        <div class="conc-item-body">
+          把专业知识做成「认知颠覆型」科普，标题用「[大众误解] 不止 [常见认知]，[冷门事实] 也 [意外结论]」公式
+          <em>证据：《传世珠宝不止红蓝宝和祖母绿》1985赞，《审美暴击！中国珍珠》898赞，均超博主整体均赞851。操作步骤：找专业领域里1个「大多数人不知道但行内人都懂」的知识点，用3组对比数据证明。</em>
+        </div>
+      </div>
+      <div class="conc-item">
+        <div class="conc-item-num">02</div>
+        <div class="conc-item-body">
+          把真实生活决策过程公开化——不展示结果，而是展示决策摩擦
+          <em>证据：《婚前坦白局》展示真实财务分歧，316评论（均值的4.1倍）。操作步骤：选一个你正在面对的真实决策（不是已经完成的），把决策过程中的矛盾点和不确定性说出来，让读者参与评判。</em>
+        </div>
+      </div>
+      <div class="conc-item">
+        <div class="conc-item-num">03</div>
+        <div class="conc-item-body">
+          用感叹型标题 + 高信息密度内容冲高藏赞比（目标 &gt;60%）
+          <em>证据：TOP1/TOP5/TOP6 藏赞比分别是81.8%/83.1%/120.9%——都是「让读者觉得收藏了等于拥有了」的工具型内容。操作步骤：标题公式「[建立/掌握] XXX！[具体效果]！」，正文给可执行的清单或原则，不给模糊建议。</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="conc-section" style="margin-top:24px">
+      <div class="conc-label">⚠️ 3 件要避免的坑</div>
+      <div class="conc-item">
+        <div class="conc-item-num">01</div>
+        <div class="conc-item-body">
+          镜头稳定性不达标：视频晃动会直接拖累互动数据
+          <em>反面教材：《奶茶妹做播客》1288赞，评论区TOP3全是「晃死了」「头晕」。这条本可达到1500+，但被制作质量吃掉了潜力。</em>
+        </div>
+      </div>
+      <div class="conc-item">
+        <div class="conc-item-num">02</div>
+        <div class="conc-item-body">
+          地理/事实信息未核实就发布：攻略型内容的准确性是硬要求
+          <em>反面教材：《湛江旅游攻略》评论区被多人详细指出「江门赤坎古镇 ≠ 湛江赤坎区」，虽然作者及时道歉，但信誉损耗已产生。</em>
+        </div>
+      </div>
+      <div class="conc-item">
+        <div class="conc-item-num">03</div>
+        <div class="conc-item-body">
+          纯蹭热点内容（分析他人）比原创生活叙事风险高、效率低
+          <em>数据：分析他人内容（奶茶妹1288赞）vs 原创生活叙事（婚前坦白局1965赞），差距52%。而且他人内容受博主本人争议影响，护城河薄。</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-formula">
+      <div class="bottom-formula-label">DISTILLED FORMULA</div>
+      <div class="bottom-formula-text">夜忙症的底层公式 =<br>专业知识壁垒 × 真实经历叙事 × 女性价值立场</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /page -->
+
+<script>
+// ── 1. FadeInUp IntersectionObserver ──────────────────────────
+const modules = document.querySelectorAll('.module');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // draw-in divider
+      const dl = e.target.querySelector('.divider-line');
+      if (dl) setTimeout(() => dl.classList.add('drawn'), 200);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+modules.forEach(m => obs.observe(m));
+
+// ── 2. Number Counter (module 8 only) ──────────────────────────
+function animateCounter(el, target, decimals, duration) {
+  const start = performance.now();
+  const update = (now) => {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val = target * ease;
+    if (decimals > 0) {
+      el.textContent = val.toFixed(decimals) + '%';
+    } else {
+      el.textContent = Math.round(val).toLocaleString();
+    }
+    if (t < 1) requestAnimationFrame(update);
+    else {
+      if (decimals > 0) el.textContent = target.toFixed(decimals) + '%';
+      else el.textContent = target.toLocaleString();
+    }
+  };
+  requestAnimationFrame(update);
+}
+
+const m8 = document.getElementById('m8');
+let countersDone = false;
+const counterObs = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !countersDone) {
+    countersDone = true;
+    document.querySelectorAll('#m8 .stat-val[data-target]').forEach(el => {
+      const target = parseFloat(el.dataset.target);
+      const decimals = parseInt(el.dataset.decimals || '0');
+      el.textContent = decimals > 0 ? '0.0%' : '0';
+      animateCounter(el, target, decimals, 1800);
+    });
+  }
+}, { threshold: 0.2 });
+if (m8) counterObs.observe(m8);
+
+// ── prefers-reduced-motion guard ──────────────────────────────
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  modules.forEach(m => { m.style.opacity = 1; m.style.transform = 'none'; });
+  document.querySelectorAll('.divider-line').forEach(d => d.style.width = '100%');
+}
+</script>
+</body>
+</html>
