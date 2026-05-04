@@ -273,8 +273,7 @@ export default function Home() {
           {[
             { number: '250+', label: '爆款笔记' },
             { number: '1.2w+', label: '互动数据点' },
-            { number: '5', label: '位博主 Agent' },
-            { number: '5', label: '个品类' },
+            { number: '5', label: '个行业顾问 Agent' },
           ].map((s, i, arr) => (
             <div key={i} style={{
               display: 'flex', alignItems: 'stretch',

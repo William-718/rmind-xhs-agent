@@ -32,6 +32,10 @@ interface Blogger {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
+const TRACK_EMOJI: Record<string, string> = {
+  美妆: '💄', 时尚: '👗', 生活: '🌿', 美食: '🍜', 家居: '🏠',
+}
+
 const TRACK_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   美妆: { bg: '#FFF0F2', text: '#FF2442', border: '#FFB3BF' },
   时尚: { bg: '#F5F0FF', text: '#7C3AED', border: '#C4B5FD' },
@@ -145,11 +149,9 @@ function DnaCard({
 
 function Top10Drawer({
   notes,
-  bloggerName,
   onClose,
 }: {
   notes: string[]
-  bloggerName: string
   onClose: () => void
 }) {
   return (
@@ -176,7 +178,7 @@ function Top10Drawer({
           margin: '0 auto 24px',
         }} />
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1F1F1F', margin: '0 0 20px' }}>
-          {bloggerName} · TOP 10 爆款笔记
+          TOP 10 爆款笔记研究样本
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {notes.map((note, i) => (
@@ -266,7 +268,7 @@ export default function BloggerDetailPage() {
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 12L6 8l4-4" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          所有博主
+          所有顾问
         </button>
         <div style={{ fontSize: 16, fontWeight: 600, color: '#1F1F1F' }}>
           薯脑<span style={{ color: '#FF2442' }}>Rmind</span>
@@ -288,15 +290,17 @@ export default function BloggerDetailPage() {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 24 }}>
             <div style={{
               width: 88, height: 88, borderRadius: '50%', flexShrink: 0,
-              border: '2.5px solid #F0E8E5',
-              backgroundImage: `url(${blogger.avatar})`,
-              backgroundSize: '130%',
-              backgroundPosition: 'center',
-            }} />
+              border: `2.5px solid ${trackColor.border}`,
+              background: trackColor.bg,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 38,
+            }}>
+              {TRACK_EMOJI[blogger.track] ?? '🤖'}
+            </div>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
                 <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1F1F1F', margin: 0, lineHeight: 1.2 }}>
-                  {blogger.name}
+                  {blogger.track}行业顾问
                 </h1>
                 <span style={{
                   fontSize: 12, fontWeight: 600, padding: '3px 10px',
@@ -350,7 +354,7 @@ export default function BloggerDetailPage() {
               fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
               color: '#9B9B9B', textTransform: 'uppercase',
             }}>
-              博主 DNA · 6 维度解码
+              行业研究 · 6 维度解码
             </div>
             <div style={{ flex: 1, height: 1, background: '#F0E8E5' }} />
             <div style={{ fontSize: 12, color: '#9B9B9B' }}>点击展开详情</div>
@@ -433,10 +437,10 @@ export default function BloggerDetailPage() {
               letterSpacing: '0.02em',
             }}
           >
-            与 {blogger.name} 的 AI 分身对话 →
+            与{blogger.track}行业顾问对话 →
           </button>
           <p style={{ textAlign: 'center', fontSize: 12, color: '#9B9B9B', margin: '8px 0 0' }}>
-            基于真实笔记数据解码，获取专属定位 / 选题 / 诊断建议
+            基于行业深度研究，获取专属定位 / 选题 / 诊断建议
           </p>
         </div>
       </div>
@@ -445,7 +449,6 @@ export default function BloggerDetailPage() {
       {showTop10 && (
         <Top10Drawer
           notes={blogger.topNotes}
-          bloggerName={blogger.name}
           onClose={() => setShowTop10(false)}
         />
       )}

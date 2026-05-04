@@ -16,78 +16,73 @@ const TRACK_COLORS: Record<string, { bg: string; text: string; border: string }>
 const BLOGGERS = [
   {
     id: 'jijiyaya',
-    name: '叽叽亚亚',
+    name: '美妆行业顾问',
     track: '美妆',
-    avatar: '/avatars/jijiyaya.jpg',
-    tagline: '揭露派美妆博主，替你踩过所有坑，才开口说真实话',
+    emoji: '💄',
+    tagline: '基于美妆赛道头部内容的系统研究，帮你建立有立场、可复制的美妆内容方法论',
     stats: [
-      { label: '粉丝数', value: '79.2万' },
-      { label: '均赞', value: '21,422' },
-      { label: '藏赞比', value: '36.1%' },
+      { label: '研究样本', value: '30 条笔记' },
+      { label: '分析维度', value: '10 项' },
+      { label: '爆款公式', value: '3 套' },
     ],
-    sample: '30 条笔记',
-    highlight: '揭露类内容跨美妆 / 医美 / 护肤三赛道均爆款',
-    topNote: '作为口红博主，我居然被种草一堆冷门口红？',
+    highlight: '揭露类 / 护肤教程 / 里程碑内容均可实现高爆款率，三赛道规律已系统提炼',
+    topNote: '「好内容不是精心包装出来的，是真实经历堆出来的」',
   },
   {
     id: 'tansuanbaibai',
-    name: '碳酸饮料拜拜',
+    name: '时尚行业顾问',
     track: '时尚',
-    avatar: '/avatars/tansuanbaibai.jpg',
-    tagline: '在场就是内容，用真实松弛感传递时尚的可望可及性',
+    emoji: '👗',
+    tagline: '深度解析时尚赛道的在场感内容逻辑，用松弛视角打造可望可及的穿搭方法论',
     stats: [
-      { label: '粉丝数', value: '141.9万' },
-      { label: '均赞', value: '19,520' },
-      { label: '收藏率', value: '6.9%' },
+      { label: '研究样本', value: '39 条笔记' },
+      { label: '分析维度', value: '10 项' },
+      { label: '爆款公式', value: '3 套' },
     ],
-    sample: '39 条笔记',
-    highlight: '时装周系列均赞 22,340，是日常穿搭内容的 3 倍',
-    topNote: 'pov：当你觉得自己穿的很松弛来到巴黎',
+    highlight: '稀缺场景内容均赞是日常穿搭的 3 倍，在场感内容策略已系统提炼',
+    topNote: '「真正的松弛感是一种状态，不是一种技巧」',
   },
   {
     id: 'yemangzheng',
-    name: '夜忙症',
+    name: '生活行业顾问',
     track: '生活',
-    avatar: '/avatars/yemangzheng.jpg',
-    tagline: '有品位的真实主义者，用长期主义视角看消费、感情和人生',
+    emoji: '🌿',
+    tagline: '聚焦长期主义生活视角，帮你在低频更新中建立高信任度的内容人格',
     stats: [
-      { label: '粉丝数', value: '90.5万' },
-      { label: '均赞', value: '851' },
-      { label: '更新节奏', value: '36.4天/篇' },
+      { label: '研究样本', value: '20 条笔记' },
+      { label: '分析维度', value: '10 项' },
+      { label: '爆款公式', value: '3 套' },
     ],
-    sample: '20 条笔记',
-    highlight: '低频精品策略，女性成长系列均赞 1,068，珠宝科普藏赞比极高',
-    topNote: '婚姻关系中最重要的到底是什么❓婚前坦白局',
+    highlight: '低频精品策略验证：减少更新频率、提高内容密度可显著提升藏赞比',
+    topNote: '「长期主义不是慢，是每一条都值得被收藏」',
   },
   {
     id: 'layuexiaojiu',
-    name: '腊月小九',
+    name: '美食行业顾问',
     track: '美食',
-    avatar: '/avatars/layuexiaojiu.jpg',
-    tagline: '一个普通妈妈用食物丈量孩子成长的时间',
+    emoji: '🍜',
+    tagline: '用情感叙事重新定义美食内容，帮你找到食物背后打动人的真实表达',
     stats: [
-      { label: '粉丝数', value: '523.6万' },
-      { label: '均赞', value: '27,909' },
-      { label: '藏赞比', value: '14.9%' },
+      { label: '研究样本', value: '30 条笔记' },
+      { label: '分析维度', value: '10 项' },
+      { label: '爆款公式', value: '3 套' },
     ],
-    sample: '30 条笔记',
-    highlight: '均藏 4,167，儿子归家系列情感密度最强，月更仍保持 TOP 级数据',
-    topNote: '只有孩子回家才想好好做饭！',
+    highlight: '情感钩子型美食内容藏赞比远超纯教程内容，家庭叙事系列规律已提炼',
+    topNote: '「做饭的意义不是食物，是食物背后的那个人」',
   },
   {
     id: 'muzilan',
-    name: '木梓蓝🏠',
+    name: '家居行业顾问',
     track: '家居',
-    avatar: '/avatars/muzilan.jpg',
-    tagline: '用极致懒人思维对抗传统装修惯性，让每个设计决策减少重复劳动',
+    emoji: '🏠',
+    tagline: '以懒人思维重构家居装修内容逻辑，帮你生产高收藏、强复购的实用干货',
     stats: [
-      { label: '粉丝数', value: '51.8万' },
-      { label: '均赞', value: '3,903' },
-      { label: '藏赞比', value: '66.6%' },
+      { label: '研究样本', value: '29 条笔记' },
+      { label: '分析维度', value: '10 项' },
+      { label: '爆款公式', value: '3 套' },
     ],
-    sample: '29 条笔记',
-    highlight: 'TOP4 藏赞比高达 134.9%，内容被粉丝当装修参考手册反复查阅',
-    topNote: '适女化懒人设计！按女生需求设计的家有多爽？',
+    highlight: '工具型内容藏赞比可达 130%+，"来抄作业"式表达是激活收藏的核心机制',
+    topNote: '「懒不是借口，懒是设计创新最真实的驱动力」',
   },
 ]
 
@@ -302,7 +297,7 @@ export default function ExplorePage() {
             把值得学习的<span style={{ color: '#FF2442' }}>爆款博主</span>，变成你的随身顾问
           </h1>
           <p style={{ fontSize: 14.5, color: '#6B6B6B', margin: 0, lineHeight: 1.65 }}>
-            选择一位博主，与 TA 的 AI 分身深度对话，获取专属定位 · 选题 · 诊断建议
+            选择一个行业顾问，获取专属定位 · 选题 · 笔记诊断建议
           </p>
         </div>
 
@@ -461,15 +456,17 @@ export default function ExplorePage() {
                   e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,0,0,0.04)'
                 }}
               >
-                {/* Avatar + Name */}
+                {/* Emoji Icon + Name */}
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16 }}>
                   <div style={{
                     width: 64, height: 64, borderRadius: '50%', flexShrink: 0,
-                    border: '2px solid #F0E8E5',
-                    backgroundImage: `url(${blogger.avatar})`,
-                    backgroundSize: '130%',
-                    backgroundPosition: 'center',
-                  }} />
+                    border: `2px solid ${trackColor.border}`,
+                    background: trackColor.bg,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 26,
+                  }}>
+                    {blogger.emoji}
+                  </div>
                   <div style={{ flex: 1, minWidth: 0, paddingTop: 2 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 18, fontWeight: 800, color: '#1F1F1F', letterSpacing: '-0.01em' }}>
@@ -530,10 +527,10 @@ export default function ExplorePage() {
                     fontSize: 10, color: '#B0A0A0', marginBottom: 3,
                     letterSpacing: '0.05em', textTransform: 'uppercase',
                   }}>
-                    代表爆款 · 样本 {blogger.sample}
+                    研究精华 · 行业金句
                   </div>
                   <p style={{ fontSize: 12.5, color: '#1F1F1F', margin: 0, lineHeight: 1.55, fontStyle: 'italic' }}>
-                    「{blogger.topNote}」
+                    {blogger.topNote}
                   </p>
                 </div>
 

@@ -26,6 +26,34 @@ interface Blogger {
   reportPath: string
 }
 
+// ── Track display helpers ─────────────────────────────────────────────────────
+
+const TRACK_EMOJI: Record<string, string> = {
+  美妆: '💄', 时尚: '👗', 生活: '🌿', 美食: '🍜', 家居: '🏠',
+}
+const TRACK_COLORS: Record<string, { bg: string; border: string }> = {
+  美妆: { bg: '#FFF0F2', border: '#FFB3BF' },
+  时尚: { bg: '#F5F0FF', border: '#C4B5FD' },
+  生活: { bg: '#F0FFF4', border: '#6EE7B7' },
+  美食: { bg: '#FFFBEB', border: '#FCD34D' },
+  家居: { bg: '#F0F9FF', border: '#7DD3FC' },
+}
+
+function TrackAvatar({ track, size }: { track: string; size: number }) {
+  const color = TRACK_COLORS[track] ?? { bg: '#FFF0F2', border: '#FFB3BF' }
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%', flexShrink: 0,
+      border: `1.5px solid ${color.border}`,
+      background: color.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: Math.round(size * 0.42),
+    }}>
+      {TRACK_EMOJI[track] ?? '🤖'}
+    </div>
+  )
+}
+
 // ── Preset Questions ──────────────────────────────────────────────────────────
 
 const PRESETS = [
@@ -58,13 +86,11 @@ function timeAgo(ts: number): string {
 
 // ── Message Bubble ────────────────────────────────────────────────────────────
 
-function Bubble({ msg, avatar }: { msg: Message; avatar: string }) {
+function Bubble({ msg, track }: { msg: Message; track: string }) {
   const isUser = msg.role === 'user'
   return (
     <div style={{ display: 'flex', flexDirection: isUser ? 'row-reverse' : 'row', gap: 10, alignItems: 'flex-end' }}>
-      {!isUser && (
-        <div style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, border: '1.5px solid #F0E8E5', backgroundImage: `url(${avatar})`, backgroundSize: '130%', backgroundPosition: 'center' }} />
-      )}
+      {!isUser && <TrackAvatar track={track} size={34} />}
       <div style={{
         maxWidth: '74%',
         padding: isUser ? '10px 15px' : '13px 17px',
@@ -86,10 +112,10 @@ function Bubble({ msg, avatar }: { msg: Message; avatar: string }) {
 
 // ── Typing Dots ───────────────────────────────────────────────────────────────
 
-function TypingDots({ avatar }: { avatar: string }) {
+function TypingDots({ track }: { track: string }) {
   return (
     <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
-      <div style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, border: '1.5px solid #F0E8E5', backgroundImage: `url(${avatar})`, backgroundSize: '130%', backgroundPosition: 'center' }} />
+      <TrackAvatar track={track} size={34} />
       <div style={{
         padding: '13px 17px', borderRadius: '4px 18px 18px 18px',
         background: '#fff', border: '1px solid #EDE5E2',
@@ -309,15 +335,15 @@ export default function ChatPage() {
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8l4-4" stroke="#9B9B9B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            所有博主
+            所有顾问
           </button>
 
-          {/* Blogger mini-header */}
+          {/* Advisor mini-header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #F0E8E5', flexShrink: 0, backgroundImage: `url(${blogger.avatar})`, backgroundSize: '130%', backgroundPosition: 'center' }} />
+            <TrackAvatar track={blogger.track} size={36} />
             <div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: '#1F1F1F', lineHeight: 1.2 }}>{blogger.name}</div>
-              <div style={{ fontSize: 11, color: '#9B9B9B', marginTop: 1 }}>{blogger.track} · AI 分身</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: '#1F1F1F', lineHeight: 1.2 }}>{blogger.track}行业顾问</div>
+              <div style={{ fontSize: 11, color: '#9B9B9B', marginTop: 1 }}>{blogger.track} · 行业研究</div>
             </div>
           </div>
 
@@ -413,19 +439,19 @@ export default function ChatPage() {
           display: 'flex', alignItems: 'center', gap: 12,
           flexShrink: 0,
         }}>
-          <div style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid #F0E8E5', flexShrink: 0, backgroundImage: `url(${blogger.avatar})`, backgroundSize: '130%', backgroundPosition: 'center' }} />
+          <TrackAvatar track={blogger.track} size={38} />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14.5, fontWeight: 700, color: '#1F1F1F', lineHeight: 1.2 }}>
-              {blogger.name}
+              {blogger.track}行业顾问
               <span style={{
                 marginLeft: 7, fontSize: 10.5, fontWeight: 600,
                 background: '#FFF0F2', color: '#FF2442',
                 padding: '1.5px 7px', borderRadius: 100, verticalAlign: 'middle',
               }}>
-                AI 分身
+                AI 顾问
               </span>
             </div>
-            <div style={{ fontSize: 11, color: '#9B9B9B', marginTop: 1 }}>{blogger.track} 博主 · 基于真实笔记解码</div>
+            <div style={{ fontSize: 11, color: '#9B9B9B', marginTop: 1 }}>{blogger.track} 赛道 · 基于行业深度研究</div>
           </div>
           <div style={{
             width: 8, height: 8, borderRadius: '50%', background: '#22C55E',
@@ -439,14 +465,14 @@ export default function ChatPage() {
           padding: '24px 24px 8px',
           display: 'flex', flexDirection: 'column', gap: 18,
         }}>
-          {isInitializing && <TypingDots avatar={blogger.avatar} />}
+          {isInitializing && <TypingDots track={blogger.track} />}
 
           {messages.map((msg, i) => (
-            <Bubble key={i} msg={msg} avatar={blogger.avatar} />
+            <Bubble key={i} msg={msg} track={blogger.track} />
           ))}
 
           {isStreaming && messages[messages.length - 1]?.role === 'user' && (
-            <TypingDots avatar={blogger.avatar} />
+            <TypingDots track={blogger.track} />
           )}
 
           {/* Full preset cards (before first user message) */}
@@ -556,7 +582,7 @@ export default function ChatPage() {
                   sendMessage(input)
                 }
               }}
-              placeholder={`问问 ${blogger.name} 的创作经验...`}
+              placeholder={`问问${blogger.track}行业顾问...`}
               disabled={isStreaming}
               rows={1}
               style={{
@@ -583,7 +609,7 @@ export default function ChatPage() {
             </button>
           </div>
           <p style={{ textAlign: 'center', fontSize: 11, color: '#C0B8B5', margin: '7px 0 0' }}>
-            AI 分身基于真实笔记解码 · Enter 发送 · Shift+Enter 换行
+            AI 行业顾问基于深度研究 · Enter 发送 · Shift+Enter 换行
           </p>
         </div>
       </div>
