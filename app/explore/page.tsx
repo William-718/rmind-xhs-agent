@@ -534,41 +534,23 @@ export default function ExplorePage() {
                   </p>
                 </div>
 
-                {/* Two CTA buttons */}
-                <div style={{ display: 'flex', gap: 9 }}>
-                  <button
-                    onClick={() => router.push(`/blogger/${blogger.id}`)}
-                    style={{
-                      flex: 1, padding: '10px 0',
-                      borderRadius: 10,
-                      border: '1.5px solid #EDE5E2',
-                      background: '#fff',
-                      color: '#1F1F1F', fontSize: 12.5, fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'border-color 0.15s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = '#1F1F1F')}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = '#EDE5E2')}
-                  >
-                    查看解码报告
-                  </button>
-                  <button
-                    onClick={() => router.push(`/chat/${blogger.id}`)}
-                    style={{
-                      flex: 1, padding: '10px 0',
-                      borderRadius: 10,
-                      border: 'none',
-                      background: '#FF2442',
-                      color: '#fff', fontSize: 12.5, fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#E0001F')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#FF2442')}
-                  >
-                    和 TA 聊聊
-                  </button>
-                </div>
+                {/* Single CTA */}
+                <button
+                  onClick={() => router.push(`/chat/${blogger.id}`)}
+                  style={{
+                    width: '100%', padding: '11px 0',
+                    borderRadius: 10,
+                    border: 'none',
+                    background: '#FF2442',
+                    color: '#fff', fontSize: 13, fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#E0001F')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#FF2442')}
+                >
+                  和 TA 聊聊
+                </button>
               </div>
             )
           })}
